@@ -1,0 +1,39 @@
+{
+    "name": "z-golly/elastic",
+    "description": "elasticsearch for laravel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jonathan",
+            "email": "jianyang1209@outlook.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0",
+        "laravel/framework": "^8.0",
+        "elasticsearch/elasticsearch": "^7.11"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Golly\\Elastic\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Golly\\Elastic\\ElasticServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
