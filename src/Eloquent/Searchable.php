@@ -5,6 +5,7 @@ namespace Golly\Elastic\Eloquent;
 
 use Golly\Elastic\Engines\ElasticEngine;
 use Golly\Elastic\Jobs\MakeSearchable;
+use Golly\Elastic\Observers\ModelObserver;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

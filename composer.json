@@ -11,7 +11,8 @@
     "require": {
         "php": "^7.3|^8.0",
         "laravel/framework": "^8.0",
-        "elasticsearch/elasticsearch": "^7.11"
+        "elasticsearch/elasticsearch": "^7.11",
+        "doctrine/annotations": "^1.12"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.3"

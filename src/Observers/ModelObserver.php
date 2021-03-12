@@ -1,18 +1,18 @@
 <?php
 
 
-namespace Golly\Elastic\Eloquent;
+namespace Golly\Elastic\Observers;
 
 
+use Golly\Elastic\Eloquent\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ModelObserver
- * @package Golly\Elastic\Eloquent
+ * @package Golly\Elastic\Observers
  */
 class ModelObserver
 {
-
     /**
      * Handle the saved event for the model.
      *
