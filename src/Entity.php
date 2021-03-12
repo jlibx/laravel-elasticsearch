@@ -20,6 +20,11 @@ class Entity implements EntityInterface
     protected $reflection;
 
     /**
+     * @var bool
+     */
+    protected $snake = true;
+
+    /**
      * @var array
      */
     protected $original = [];
@@ -37,7 +42,7 @@ class Entity implements EntityInterface
     {
         $self = new static();
 
-        return $self->getReflection()->map($self)->toArray();
+        return $self->getReflection()->map($self);
     }
 
     /**
@@ -77,7 +82,7 @@ class Entity implements EntityInterface
     public function toArray(callable $filter = null)
     {
         if (!$this->array) {
-            $this->array = $this->getReflection()->extract($this);
+            $this->array = $this->getReflection()->extract($this, $this->snake);
         }
         if (is_null($filter)) {
             return $this->array;

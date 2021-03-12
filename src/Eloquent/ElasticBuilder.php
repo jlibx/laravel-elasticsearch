@@ -34,21 +34,6 @@ class ElasticBuilder
     use Macroable;
 
     /**
-     * @var ElasticEngine
-     */
-    protected $engine;
-
-    /**
-     * @var Builder
-     */
-    protected $builder;
-
-    /**
-     * @var BoolQuery
-     */
-    protected $boolQuery;
-
-    /**
      * The model instance.
      *
      * @var Model|Searchable
@@ -75,6 +60,21 @@ class ElasticBuilder
      * @var array
      */
     public $relations = [];
+
+    /**
+     * @var ElasticEngine
+     */
+    protected $engine;
+
+    /**
+     * @var Builder
+     */
+    protected $builder;
+
+    /**
+     * @var BoolQuery
+     */
+    protected $boolQuery;
 
     /**
      * Create a new search builder instance.
@@ -442,7 +442,7 @@ class ElasticBuilder
     /**
      * Get the raw results of the search.
      *
-     * @return mixed
+     * @return array
      */
     public function raw()
     {
@@ -457,6 +457,14 @@ class ElasticBuilder
     public function keys()
     {
         return $this->engine->keys($this);
+    }
+
+    /**
+     * @return array
+     */
+    public function firstRaw()
+    {
+        return $this->limit(1)->raw();
     }
 
     /**

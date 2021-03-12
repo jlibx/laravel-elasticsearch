@@ -7,6 +7,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Golly\Elastic\Annotations\Mapping;
 use Golly\Elastic\Annotations\Source;
 use Golly\Elastic\Contracts\EntityInterface;
+use Golly\Elastic\DSL\Hydrate;
 use Golly\Elastic\Exceptions\ElasticException;
 use Illuminate\Support\Arr;
 use ReflectionClass;
@@ -27,34 +28,37 @@ class Reflection
 
     /**
      * @param EntityInterface $entity
-     * @return EntityInterface
+     * @return array
      * @throws ElasticException
      */
     public function map(EntityInterface $entity)
     {
         $reflectProperties = $this->getReflectProperties($entity);
         $annotationReader = new AnnotationReader();
+        $result = [];
         foreach ($reflectProperties as $name => $property) {
-            $column = $annotationReader->getPropertyAnnotation($property, Mapping::class);
-            if ($column instanceof Mapping) {
-                if ($column->type == 'array') {
-                    $mapping = [];
+            $mapping = $annotationReader->getPropertyAnnotation($property, Mapping::class);
+            $source = $annotationReader->getPropertyAnnotation($property, Source::class);
+            if ($mapping instanceof Mapping) {
+                if ($mapping->type == 'relation') {
+                    continue;
                 } else {
-                    $mapping = array_filter([
-                        'type' => $column->type,
-                        'analyzer' => $column->analyzer,
-                        'format' => $column->format
+                    $value = array_filter([
+                        'type' => Hydrate::toElasticType($mapping->type),
+                        'analyzer' => $mapping->analyzer,
+                        'format' => Hydrate::toElasticFormat($mapping->format)
                     ]);
                 }
             } else {
-                $mapping = [
-                    'type' => 'text'
-                ];
+                $value = ['type' => 'text'];
             }
-            $reflectProperties[$name]->setValue($entity, $mapping);
+            if ($source instanceof Source) {
+                $name = $source->field;
+            }
+            $result[$name] = $value;
         }
 
-        return $entity;
+        return $result;
     }
 
     /**
@@ -83,10 +87,11 @@ class Reflection
 
     /**
      * @param EntityInterface $entity
+     * @param bool $snake
      * @return array
      * @throws ElasticException
      */
-    public function extract(EntityInterface $entity)
+    public function extract(EntityInterface $entity, $snake = true)
     {
         $result = [];
         $properties = self::getReflectProperties($entity);
@@ -105,6 +110,11 @@ class Reflection
             } elseif ($value instanceof EntityInterface) {
                 $value = $this->extract($value);
             }
+            if ($snake) {
+                $name = preg_replace('/\s+/u', '', ucwords($name));
+                $name = mb_strtolower((preg_replace('/(.)(?=[A-Z])/u', '$1_', $name)), 'UTF-8');
+            }
+
             $result[$name] = $value;
         }
 
