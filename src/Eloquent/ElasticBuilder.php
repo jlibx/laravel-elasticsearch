@@ -181,8 +181,8 @@ class ElasticBuilder
         if (count($value) == 2) {
             $this->boolQuery->must(
                 new RangeQuery($field, [
-                    'gte' => $value[0],
-                    'lte' => $value[1],
+                    RangeQuery::GTE => $value[0],
+                    RangeQuery::LTE => $value[1],
                 ])
             );
         }
@@ -199,8 +199,8 @@ class ElasticBuilder
     {
         $this->boolQuery->mustNot(
             new RangeQuery($field, [
-                'gte' => $value[0],
-                'lte' => $value[1],
+                RangeQuery::GTE => $value[0],
+                RangeQuery::LTE => $value[1],
             ])
         );
 
@@ -397,6 +397,31 @@ class ElasticBuilder
     }
 
     /**
+     * Explain the request.
+     *
+     * @return array
+     */
+    public function explain()
+    {
+        $this->builder->setExplain(true);
+
+        return $this->engine->search($this);
+    }
+
+    /**
+     * Set the min_score on the filter.
+     *
+     * @param int $score
+     * @return $this
+     */
+    public function minScore(int $score)
+    {
+        $this->builder->setMinScore($score);
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getBuilderQuery()
@@ -407,15 +432,11 @@ class ElasticBuilder
     }
 
     /**
-     * Explain the request.
-     *
-     * @return array
+     * @return ElasticEngine
      */
-    public function explain()
+    public function getEngine()
     {
-        $this->builder->setExplain(true);
-
-        return $this->engine->search($this);
+        return $this->engine;
     }
 
     /**
@@ -445,7 +466,7 @@ class ElasticBuilder
      */
     public function first()
     {
-        return $this->get()->first();
+        return $this->limit(1)->get()->first();
     }
 
     /**
@@ -538,27 +559,6 @@ class ElasticBuilder
     public function dd()
     {
         dd($this->getBuilderQuery());
-    }
-
-    /**
-     * Set the min_score on the filter.
-     *
-     * @param int $score
-     * @return $this
-     */
-    public function minScore(int $score)
-    {
-        $this->builder->setMinScore($score);
-
-        return $this;
-    }
-
-    /**
-     * @return ElasticEngine
-     */
-    public function getEngine()
-    {
-        return $this->engine;
     }
 
     /**

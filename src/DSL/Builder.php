@@ -40,18 +40,18 @@ class Builder
     protected $trackTotalHits = true;
 
     /**
-     * 从某个偏移点检索命中。默认值为0
+     * 从某个偏移点检索命中
      *
      * @var int
      */
     protected $from;
 
     /**
-     * 查询数量。默认为10
+     * 查询数量
      *
      * @var int
      */
-    protected $size = 10;
+    protected $size;
 
     /**
      * 允许控制_source字段如何在每次命中时返回.

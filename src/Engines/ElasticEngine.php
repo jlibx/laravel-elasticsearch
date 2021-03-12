@@ -9,7 +9,6 @@ use Golly\Elastic\Eloquent\ElasticBuilder;
 use Golly\Elastic\Eloquent\Searchable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -35,9 +34,9 @@ class ElasticEngine extends Engine
      */
     public function __construct()
     {
-        $this->elastic = ClientBuilder::create()->setHosts([
-            'elasticsearch:9200'
-        ])->build();
+        $this->elastic = ClientBuilder::create()->setHosts(
+            config('elastic.hosts')
+        )->build();
     }
 
     /**
@@ -186,17 +185,6 @@ class ElasticEngine extends Engine
         $model->newQuery()
             ->orderBy($model->getKeyName())
             ->unsearchable();
-    }
-
-    /**
-     * Determine if the given model uses soft deletes.
-     *
-     * @param Model|Searchable $model
-     * @return bool
-     */
-    protected function useSoftDelete($model)
-    {
-        return in_array(SoftDeletes::class, class_uses_recursive($model));
     }
 
 }
