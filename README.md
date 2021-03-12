@@ -33,14 +33,14 @@ class UserEntity extends Entity
     public $name;
 
     /**
-     * @Mapping(type="date", format="yyyy-MM-dd")
+     * @Mapping(type="date", format="Y-m-d")
      *
      * @var string
      */
     public $date;
 
     /**
-     * @Mapping(type="array")
+     * @Mapping(type="relation")
      *
      * @var array|UserAddressEntity[]
      */
@@ -148,6 +148,9 @@ $users = User::newElastic()
     ->where(function (BoolQuery $query) {
         $query->orWhereLike('title', 'PHP')
             ->orWhereLike('title', 'JAVA');
+    })
+    ->whereHas('roles', function (BoolQuery $query) {
+        $query->where('name', 'admin');
     })
     ->whereLike('name', '茅台小王子')
     ->orderBy('id')
