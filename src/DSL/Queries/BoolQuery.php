@@ -31,6 +31,13 @@ class BoolQuery extends AbstractQuery
     protected $containers = [];
 
     /**
+     * 当前关系
+     *
+     * @var string|null
+     */
+    protected $relation;
+
+    /**
      * Constructor to prepare container.
      *
      * @param array $containers
@@ -136,6 +143,7 @@ class BoolQuery extends AbstractQuery
             $field($boolQuery);
             $this->must($boolQuery);
         } else {
+            $field = $this->prepareField($field);
             [$value, $operator] = $this->prepareValueAndOperator(
                 $value, $operator, func_num_args() === 2
             );
@@ -220,6 +228,7 @@ class BoolQuery extends AbstractQuery
             $field($boolQuery);
             $this->should($boolQuery);
         } else {
+            $field = $this->prepareField($field);
             [$value, $operator] = $this->prepareValueAndOperator(
                 $value, $operator, func_num_args() === 2
             );
@@ -286,6 +295,34 @@ class BoolQuery extends AbstractQuery
     {
         return $this->orWhere($filed, 'match', $value);
     }
+
+    /**
+     * @param string|null $relation
+     * @return $this
+     */
+    public function setRelation(?string $relation)
+    {
+        if ($relation) {
+            $relation .= '.';
+        }
+        $this->relation = $relation;
+
+        return $this;
+    }
+
+    /**
+     * @param string $field
+     * @return string
+     */
+    protected function prepareField(string $field)
+    {
+        if (!$this->relation || str_starts_with($field, $this->relation)) {
+            return $field;
+        }
+
+        return $this->relation . $field;
+    }
+
 
     /**
      * @param $value

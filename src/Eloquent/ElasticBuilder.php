@@ -133,6 +133,20 @@ class ElasticBuilder
     }
 
     /**
+     * @param string $relation
+     * @param Closure $callback
+     * @return $this
+     */
+    public function whereHas(string $relation, Closure $callback)
+    {
+        $this->boolQuery->setRelation($relation);
+        $callback($this->boolQuery);
+        $this->boolQuery->setRelation(null);
+
+        return $this;
+    }
+
+    /**
      * @param string|callable $field
      * @param string|null $operator
      * @param string|null $value
