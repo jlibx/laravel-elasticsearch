@@ -141,7 +141,7 @@ class ElasticBuilder
     {
         $this->boolQuery->setRelation($relation);
         $callback($this->boolQuery);
-        $this->boolQuery->setRelation(null);
+        $this->boolQuery->setRelation();
 
         return $this;
     }
@@ -211,12 +211,14 @@ class ElasticBuilder
      */
     public function whereNotBetween(string $field, array $value)
     {
-        $this->boolQuery->mustNot(
-            new RangeQuery($field, [
-                RangeQuery::GTE => $value[0],
-                RangeQuery::LTE => $value[1],
-            ])
-        );
+        if (count($value) == 2) {
+            $this->boolQuery->mustNot(
+                new RangeQuery($field, [
+                    RangeQuery::GTE => $value[0],
+                    RangeQuery::LTE => $value[1],
+                ])
+            );
+        }
 
         return $this;
     }
