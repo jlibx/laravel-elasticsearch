@@ -45,7 +45,7 @@ class Reflection
                 } else {
                     $value = array_filter([
                         'type' => Hydrate::toElasticType($mapping->type),
-                        'analyzer' => $mapping->analyzer,
+                        'analyzer' => Hydrate::toElasticAnalyzer($mapping->analyzer),
                         'format' => Hydrate::toElasticFormat($mapping->format)
                     ]);
                 }

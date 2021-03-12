@@ -129,7 +129,12 @@ trait Searchable
      */
     public function searchableIndex()
     {
-        return $this->getTable();
+        $pieces = [
+            config('elastic.prefix'),
+            $this->getTable()
+        ];
+
+        return implode('_', $pieces);
     }
 
     /**

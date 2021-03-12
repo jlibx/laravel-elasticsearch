@@ -32,6 +32,11 @@ class Hydrate
     const TYPE_JSON = 'json';
 
     /**
+     * @var string[]
+     */
+    protected static $analyzers = ['ik_smart', 'ik_max_word'];
+
+    /**
      * @param string $type
      * @return string
      */
@@ -78,5 +83,14 @@ class Hydrate
             default:
                 return $format;
         }
+    }
+
+    /**
+     * @param string|null $analyzer
+     * @return string|null
+     */
+    public static function toElasticAnalyzer(string $analyzer = null)
+    {
+        return in_array($analyzer, self::$analyzers) ? $analyzer : null;
     }
 }
