@@ -5,10 +5,10 @@ namespace Golly\Elastic\Engines;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
-use Golly\Authority\Eloquent\Model;
 use Golly\Elastic\Eloquent\ElasticBuilder;
 use Golly\Elastic\Eloquent\Searchable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -167,10 +167,10 @@ class ElasticEngine extends Engine
     /**
      * Get the total count from a raw result returned by the engine.
      *
-     * @param mixed $results
+     * @param array $results
      * @return int
      */
-    public function getTotalCount($results)
+    public function getTotalCount(array $results)
     {
         return $results['hits']['total']['value'] ?? 0;
     }
@@ -178,7 +178,7 @@ class ElasticEngine extends Engine
     /**
      * Flush all of the model's records from the engine.
      *
-     * @param Model $model
+     * @param Model|Searchable $model
      * @return void
      */
     public function flush($model)
@@ -191,7 +191,7 @@ class ElasticEngine extends Engine
     /**
      * Determine if the given model uses soft deletes.
      *
-     * @param Model $model
+     * @param Model|Searchable $model
      * @return bool
      */
     protected function useSoftDelete($model)

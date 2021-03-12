@@ -13,7 +13,6 @@ use Golly\Elastic\DSL\Aggregations\Metrics\MaxMetric;
 use Golly\Elastic\DSL\Aggregations\Metrics\MinMetric;
 use Golly\Elastic\DSL\Aggregations\Metrics\SumMetric;
 use Golly\Elastic\DSL\Builder;
-use Golly\Elastic\DSL\Endpoints\AggregationEndpoint;
 use Golly\Elastic\DSL\Sorts\FieldSort;
 use Golly\Elastic\DSL\Queries\BoolQuery;
 use Golly\Elastic\DSL\Queries\ExistsQuery;

@@ -5,6 +5,7 @@ namespace Golly\Elastic\Engines;
 
 
 use Golly\Elastic\Eloquent\ElasticBuilder;
+use Golly\Elastic\Eloquent\Searchable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -52,7 +53,7 @@ abstract class Engine
      *
      * @param ElasticBuilder $builder
      * @param array $results
-     * @param $model
+     * @param Model|Searchable $model
      * @return mixed
      */
     abstract public function map(ElasticBuilder $builder, array $results, $model);
@@ -68,7 +69,7 @@ abstract class Engine
     /**
      * Flush all of the model's records from the engine.
      *
-     * @param Model $model
+     * @param Model|Searchable $model
      * @return void
      */
     abstract public function flush($model);

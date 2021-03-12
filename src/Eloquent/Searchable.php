@@ -16,8 +16,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 trait Searchable
 {
 
-    protected $highlight;
-
     /**
      * @var array
      */
@@ -144,14 +142,6 @@ trait Searchable
     }
 
     /**
-     * @return array
-     */
-    public function getIks()
-    {
-        return $this->iks ?? [];
-    }
-
-    /**
      * Get the indexable data array for the model.
      *
      * @return array
@@ -223,7 +213,7 @@ trait Searchable
      * @param mixed $value
      * @return $this
      */
-    public function addElasticMetadata($key, $value)
+    public function addElasticMetadata(string $key, $value)
     {
         $this->elasticMetadata[$key] = $value;
 
