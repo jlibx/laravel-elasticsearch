@@ -300,7 +300,7 @@ class BoolQuery extends AbstractQuery
      * @param string|null $relation
      * @return $this
      */
-    public function setRelation(?string $relation)
+    public function setRelation(string $relation = null)
     {
         if ($relation) {
             $relation .= '.';
