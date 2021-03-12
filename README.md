@@ -26,7 +26,7 @@ class UserEntity extends Entity
     public $id;
 
     /**
-     * @Mapping(type="text", analyzer="ik_small")
+     * @Mapping(type="text", analyzer="ik_smart")
      *
      * @var
      */
@@ -94,7 +94,7 @@ array:4 [
   ]
   "name" => array:2 [
     "type" => "text"
-    "analyzer" => "ik_small"
+    "analyzer" => "ik_smart"
   ]
   "date" => array:2 [
     "type" => "date"
