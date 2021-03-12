@@ -30,19 +30,14 @@ class Entity implements EntityInterface
     protected $array = [];
 
     /**
-     * @var array
-     */
-    protected $mapping = [];
-
-    /**
      * @return array
      * @throws Exceptions\ElasticException
      */
-    public function mapping()
+    public static function mapping()
     {
-        return $this->getReflection()
-            ->map($this)
-            ->toArray();
+        $self = new static();
+
+        return $self->getReflection()->map($self)->toArray();
     }
 
     /**
@@ -50,8 +45,12 @@ class Entity implements EntityInterface
      * @return EntityInterface|Entity
      * @throws Exceptions\ElasticException
      */
-    public static function instance(array $data)
+    public static function instance(array $data = [])
     {
+        if (empty($data)) {
+            return new static();
+        }
+
         return (new static())->toObject($data);
     }
 
@@ -59,7 +58,7 @@ class Entity implements EntityInterface
      * array to this object
      *
      * @param array $data
-     * @return EntityInterface|Entity
+     * @return EntityInterface|static
      * @throws Exceptions\ElasticException
      */
     public function toObject(array $data)

@@ -18,7 +18,7 @@ interface EntityInterface
     /**
      * @return array
      */
-    public function mapping();
+    public static function mapping();
 
     /**
      * @param array $data

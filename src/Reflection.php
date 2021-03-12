@@ -37,14 +37,18 @@ class Reflection
         foreach ($reflectProperties as $name => $property) {
             $column = $annotationReader->getPropertyAnnotation($property, Mapping::class);
             if ($column instanceof Mapping) {
-                $mapping = array_filter([
-                    'type' => $column->type,
-                    'analyzer' => $column->analyzer,
-                    'format' => $column->format
-                ]);
+                if ($column->type == 'array') {
+                    $mapping = [];
+                } else {
+                    $mapping = array_filter([
+                        'type' => $column->type,
+                        'analyzer' => $column->analyzer,
+                        'format' => $column->format
+                    ]);
+                }
             } else {
                 $mapping = [
-                    'type' => 'keyword'
+                    'type' => 'text'
                 ];
             }
             $reflectProperties[$name]->setValue($entity, $mapping);
@@ -108,24 +112,18 @@ class Reflection
     }
 
     /**
-     * @param $input
-     * @return mixed
+     * @param EntityInterface $entity
+     * @return ReflectionProperty[]
      * @throws ElasticException
      */
-    protected function getReflectProperties($input)
+    protected function getReflectProperties(EntityInterface $entity)
     {
-        if (is_object($input)) {
-            $key = get_class($input);
-        } else {
-            throw new ElasticException('Input must be an object.');
-        }
-
+        $key = get_class($entity);
         if (isset(static::$reflectProperties[$key])) {
             return static::$reflectProperties[$key];
         }
         try {
-            $reflectProperties = (new ReflectionClass($input))->getProperties(ReflectionProperty::IS_PUBLIC);
-
+            $reflectProperties = (new ReflectionClass($entity))->getProperties(ReflectionProperty::IS_PUBLIC);
             foreach ($reflectProperties as $property) {
                 $property->setAccessible(true);
                 static::$reflectProperties[$key][$property->getName()] = $property;
@@ -133,7 +131,7 @@ class Reflection
 
             return static::$reflectProperties[$key];
         } catch (Throwable $e) {
-            throw new ElasticException('Input must be an object.');
+            throw new ElasticException('Input must be an entity.');
         }
     }
 }

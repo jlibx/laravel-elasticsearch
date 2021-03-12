@@ -6,6 +6,7 @@ namespace Golly\Elastic\Eloquent;
 use Golly\Elastic\Engines\ElasticEngine;
 use Golly\Elastic\Jobs\MakeSearchable;
 use Golly\Elastic\Observers\ModelObserver;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -152,6 +153,14 @@ trait Searchable
     }
 
     /**
+     * @param Builder $query
+     * @return void
+     */
+    protected function beforeAllSearchable(Builder $query)
+    {
+    }
+
+    /**
      * Make all instances of the model searchable.
      * SearchableScope 中已经绑定 searchable
      *
@@ -160,7 +169,9 @@ trait Searchable
      */
     public function makeAllSearchable($chunk = null)
     {
-        $this->newQuery()->orderBy(
+        $this->newQuery()->when(true, function ($query) {
+            $this->beforeAllSearchable($query);
+        })->orderBy(
             $this->getKeyName()
         )->searchable($chunk);
     }
