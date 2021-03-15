@@ -57,9 +57,9 @@ class Builder
      * 允许控制_source字段如何在每次命中时返回.
      * 默认情况下操作返回_source字段的内容
      *
-     * @var
+     * @var array
      */
-    protected $source;
+    protected $source = [];
 
     /**
      * @var array
@@ -323,6 +323,17 @@ class Builder
     {
         $endpoint = $this->getEndpoint($endpointName);
         $endpoint && $endpoint->setParams($params);
+
+        return $this;
+    }
+
+    /**
+     * @param array $source
+     * @return $this
+     */
+    public function setSource($source)
+    {
+        $this->source = $source;
 
         return $this;
     }

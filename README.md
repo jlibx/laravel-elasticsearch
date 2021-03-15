@@ -47,15 +47,20 @@ class UserEntity extends Entity
     public $address = [];
 
     /**
+     * @param boolean $relation
      * @return array
      * @throws ElasticException
      */
-    public static function mapping()
+    public static function mapping($relation = true)
     {
-        $mapping = parent::mapping();
-        $mapping['address'] = [
-            'properties' => UserAddressEntity::mapping()
-        ];
+        $mapping = parent::mapping($relation);
+        if ($relation) {
+            $mapping = array_merge($mapping, [
+                'address' => [
+                    'properties' => UserAddressEntity::mapping($relation)
+                ]
+            ]);
+        }
 
         return $mapping;
     }
@@ -144,6 +149,7 @@ use App\Models\User;
 use Golly\Elastic\DSL\Queries\BoolQuery;
 
 $users = User::newElastic()
+    ->select(['id', 'name'])
     ->where('is_active', true)
     ->where(function (BoolQuery $query) {
         $query->orWhereLike('title', 'PHP')

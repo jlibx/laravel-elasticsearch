@@ -16,9 +16,10 @@ interface EntityInterface
     public static function instance(array $data);
 
     /**
+     * @param bool $relation
      * @return array
      */
-    public static function mapping();
+    public static function mapping($relation = true);
 
     /**
      * @param array $data

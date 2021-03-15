@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Traits\Macroable;
 
 /**
@@ -113,6 +114,17 @@ class ElasticBuilder
     public function with(array $relations = [])
     {
         $this->relations = $relations;
+
+        return $this;
+    }
+
+    /**
+     * @param array $fields
+     * @return $this
+     */
+    public function select($fields = [])
+    {
+        $this->builder->setSource(Arr::wrap($fields));
 
         return $this;
     }

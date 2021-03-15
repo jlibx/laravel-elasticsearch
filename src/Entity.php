@@ -35,10 +35,11 @@ class Entity implements EntityInterface
     protected $array = [];
 
     /**
+     * @param  bool $relation
      * @return array
      * @throws Exceptions\ElasticException
      */
-    public static function mapping()
+    public static function mapping($relation = true)
     {
         $self = new static();
 
