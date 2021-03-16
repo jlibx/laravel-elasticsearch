@@ -8,7 +8,7 @@ namespace Golly\Elastic\DSL\Aggregations\Buckets;
  * Class NestedBucket
  * @package Golly\Elastic\DSL\Aggregations\Buckets
  */
-class NestedBucket extends AbstractBucket
+class NestedBucket extends Bucket
 {
 
     /**

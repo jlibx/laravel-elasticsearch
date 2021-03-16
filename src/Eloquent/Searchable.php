@@ -161,7 +161,7 @@ trait Searchable
      * @param Builder $query
      * @return void
      */
-    protected function beforeAllSearchable(Builder $query)
+    public function beforeAllSearchable(Builder $query)
     {
     }
 

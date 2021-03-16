@@ -8,7 +8,7 @@ namespace Golly\Elastic\DSL\Aggregations\Buckets;
  * Class RangeBucket
  * @package Golly\Elastic\DSL\Aggregations\Buckets
  */
-class RangeBucket extends AbstractBucket
+class RangeBucket extends Bucket
 {
     /**
      * @var string

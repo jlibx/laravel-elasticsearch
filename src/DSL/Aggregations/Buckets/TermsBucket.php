@@ -7,7 +7,7 @@ namespace Golly\Elastic\DSL\Aggregations\Buckets;
  * Class TermsBucket
  * @package Golly\Elastic\DSL\Aggregations\Buckets
  */
-class TermsBucket extends AbstractBucket
+class TermsBucket extends Bucket
 {
 
     /**
@@ -33,12 +33,9 @@ class TermsBucket extends AbstractBucket
      */
     public function getArray()
     {
-        return array_filter(
-            [
-                'field' => $this->field,
-                'script' => $this->script,
-            ]
-        );
-
+        return array_filter([
+            'field' => $this->field,
+            'script' => $this->script,
+        ]);
     }
 }

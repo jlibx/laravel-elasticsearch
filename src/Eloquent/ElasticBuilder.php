@@ -5,6 +5,7 @@ namespace Golly\Elastic\Eloquent;
 
 
 use Closure;
+use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\DSL\Aggregations\Buckets\RangeBucket;
 use Golly\Elastic\DSL\Aggregations\Buckets\TermsBucket;
 use Golly\Elastic\DSL\Aggregations\Metrics\AvgMetric;
@@ -76,6 +77,17 @@ class ElasticBuilder
      * @var BoolQuery
      */
     protected $boolQuery;
+
+
+    /**
+     * @var int
+     */
+    protected $page;
+
+    /**
+     * @var int
+     */
+    protected $perPage;
 
     /**
      * Create a new search builder instance.
@@ -537,9 +549,9 @@ class ElasticBuilder
         if ($this->relations && $total > 0) {
             $collection->load($this->relations);
         }
-        $hasMorePages = ($perPage * $page) < $total;
+        $hasMorePages = ($this->perPage * $this->page) < $total;
 
-        return (new Paginator($collection, $perPage, $page, [
+        return (new Paginator($collection, $this->perPage, $this->page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]))->hasMorePagesWhen($hasMorePages);
@@ -563,10 +575,16 @@ class ElasticBuilder
             $collection->loadMissing($this->relations);
         }
 
-        return new LengthAwarePaginator($collection, $total, $perPage, $page, [
-            'path' => Paginator::resolveCurrentPath(),
-            'pageName' => $pageName,
-        ]);
+        return new LengthAwarePaginator(
+            $collection,
+            $total,
+            $this->perPage,
+            $this->page,
+            [
+                'path' => Paginator::resolveCurrentPath(),
+                'pageName' => $pageName,
+            ]
+        );
     }
 
     /**
@@ -583,7 +601,7 @@ class ElasticBuilder
         $raws = $this->engine->search($this);
         $total = $this->engine->getTotalCount($raws);
 
-        return new LengthAwarePaginator($raws, $total, $perPage, $page, [
+        return new LengthAwarePaginator($raws, $total, $this->perPage, $this->page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
@@ -605,10 +623,10 @@ class ElasticBuilder
      */
     protected function preparePageParams($perPage = null, $pageName = 'page', $page = null)
     {
-        $page = $page ?: Paginator::resolveCurrentPage($pageName);
-        $perPage = $perPage ?: $this->model->getPerPage();
+        $this->page = $page ?: Paginator::resolveCurrentPage($pageName);
+        $this->perPage = $perPage ?: $this->model->getPerPage();
 
-        $this->builder->setFrom(($page - 1) * $perPage);
-        $this->builder->setSize($perPage);
+        $this->builder->setFrom(($this->page - 1) * $perPage);
+        $this->builder->setSize($this->perPage);
     }
 }

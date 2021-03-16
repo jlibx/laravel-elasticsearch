@@ -10,7 +10,7 @@ use Golly\Elastic\DSL\Aggregations\AbstractAggregation;
  * Class Bucket
  * @package Golly\Elastic\DSL\Aggregations\Buckets
  */
-abstract class AbstractBucket extends AbstractAggregation
+abstract class Bucket extends AbstractAggregation
 {
     /**
      * @var bool
