@@ -274,6 +274,25 @@ class ElasticBuilder
      * @param string $value
      * @return $this
      */
+    public function wildcard(string $field, string $value)
+    {
+        $this->boolQuery->where($field, 'wildcard', $value);
+
+        return $this;
+    }
+
+    public function like(string $field, string $value)
+    {
+        $this->boolQuery->where($field, 'wildcard', $value);
+
+        return $this;
+    }
+
+    /**
+     * @param string $field
+     * @param string $value
+     * @return $this
+     */
     public function whereLike(string $field, string $value)
     {
         $this->boolQuery->where($field, 'like', $value);

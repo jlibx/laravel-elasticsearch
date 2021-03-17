@@ -94,7 +94,7 @@ class Reflection
     public function extract(EntityInterface $entity, $snake = true)
     {
         $result = [];
-        $properties = self::getReflectProperties($entity);
+        $properties = $this->getReflectProperties($entity);
         foreach ($properties as $name => $property) {
             $value = $property->getValue($entity);
             if (is_array($value)) {
