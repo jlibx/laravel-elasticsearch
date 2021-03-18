@@ -64,6 +64,12 @@ class ElasticBuilder
     public $relations = [];
 
     /**
+     * The withCount array
+     * @var array
+     */
+    public $countRelations = [];
+
+    /**
      * @var ElasticEngine
      */
     protected $engine;
@@ -126,6 +132,17 @@ class ElasticBuilder
     public function with(array $relations = [])
     {
         $this->relations = $relations;
+
+        return $this;
+    }
+
+    /**
+     * @param array $relations
+     * @return $this
+     */
+    public function withCount(array $relations = [])
+    {
+        $this->countRelations = $relations;
 
         return $this;
     }
@@ -274,14 +291,7 @@ class ElasticBuilder
      * @param string $value
      * @return $this
      */
-    public function wildcard(string $field, string $value)
-    {
-        $this->boolQuery->where($field, 'wildcard', $value);
-
-        return $this;
-    }
-
-    public function like(string $field, string $value)
+    public function whereWildcard(string $field, string $value)
     {
         $this->boolQuery->where($field, 'wildcard', $value);
 
@@ -592,6 +602,9 @@ class ElasticBuilder
         $total = $this->engine->getTotalCount($raws);
         if ($this->relations && $total > 0) {
             $collection->loadMissing($this->relations);
+        }
+        if ($this->countRelations && $total) {
+            $collection->loadCount($this->countRelations);
         }
 
         return new LengthAwarePaginator(

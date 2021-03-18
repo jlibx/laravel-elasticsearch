@@ -131,12 +131,13 @@ class BoolQuery extends AbstractQuery
     }
 
     /**
-     * @param string|callable $field
+     * @param $field
      * @param null $operator
      * @param null $value
+     * @param array $params
      * @return $this
      */
-    public function where($field, $operator = null, $value = null)
+    public function where($field, $operator = null, $value = null, array $params = [])
     {
         if ($field instanceof Closure) {
             $boolQuery = new self();
@@ -150,7 +151,7 @@ class BoolQuery extends AbstractQuery
             switch ($operator) {
                 case '=':
                     $this->must(
-                        new TermQuery($field, $value)
+                        new TermQuery($field, $value, $params)
                     );
                     break;
                 case '>':
@@ -181,13 +182,16 @@ class BoolQuery extends AbstractQuery
                         ])
                     );
                     break;
-                case 'like':
                 case 'match':
-                    $this->must(new MatchQuery($field, $value));
+                    $this->must(new MatchQuery($field, $value, $params));
+                    break;
+                case 'like':
+                case 'wildcard':
+                    $this->must(new WildcardQuery($field, $value, $params));
                     break;
                 case '!=':
                 case '<>':
-                    $this->mustNot(new TermQuery($field, $value));
+                    $this->mustNot(new TermQuery($field, $value, $params));
                     break;
             }
         }
@@ -216,12 +220,13 @@ class BoolQuery extends AbstractQuery
     }
 
     /**
-     * @param string|callable $field
+     * @param $field
      * @param null $operator
      * @param null $value
+     * @param array $params
      * @return $this
      */
-    public function orWhere($field, $operator = null, $value = null)
+    public function orWhere($field, $operator = null, $value = null, array $params = [])
     {
         if ($field instanceof Closure) {
             $boolQuery = new self();
@@ -235,7 +240,7 @@ class BoolQuery extends AbstractQuery
             switch ($operator) {
                 case '=':
                     $this->should(
-                        new TermQuery($field, $value)
+                        new TermQuery($field, $value, $params)
                     );
                     break;
                 case '>':
@@ -266,9 +271,12 @@ class BoolQuery extends AbstractQuery
                         ])
                     );
                     break;
-                case 'like':
                 case 'match':
-                    $this->should(new MatchQuery($field, $value));
+                    $this->should(new MatchQuery($field, $value, $params));
+                    break;
+                case 'like':
+                case 'wildcard':
+                    $this->should(new WildcardQuery($field, $value, $params));
                     break;
             }
         }
