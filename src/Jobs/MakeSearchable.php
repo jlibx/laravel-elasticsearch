@@ -4,15 +4,22 @@
 namespace Golly\Elastic\Jobs;
 
 
-use Golly\Elastic\Engines\ElasticEngine;
+use Golly\Elastic\ElasticEngine;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 /**
  * Class MakeSearchable
  * @package Golly\Elastic\Jobs
  */
-class MakeSearchable
+class MakeSearchable implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     /**
      * The models to be made searchable.
      *
@@ -32,16 +39,11 @@ class MakeSearchable
     }
 
     /**
-     * Handle the job.
-     *
+     * @param ElasticEngine $engine
      * @return void
      */
-    public function handle()
+    public function handle(ElasticEngine $engine)
     {
-        if (count($this->models) === 0) {
-            return;
-        }
-
-        (new ElasticEngine())->update($this->models);
+        $engine->update($this->models);
     }
 }

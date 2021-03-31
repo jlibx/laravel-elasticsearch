@@ -9,33 +9,13 @@ namespace Golly\Elastic\Contracts;
  */
 interface EndpointInterface
 {
-
     /**
-     * @param array $params
-     * @return mixed
+     * @return string
      */
-    public function setParams(array $params);
+    public function getName();
 
     /**
      * @return array
      */
     public function normalize();
-
-    /**
-     * @return array
-     */
-    public function getContainers();
-
-    /**
-     * @param array $containers
-     * @return void
-     */
-    public function setContainers(array $containers);
-
-    /**
-     * @param mixed $container
-     * @return void
-     */
-    public function addContainer($container);
-
 }

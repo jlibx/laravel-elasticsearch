@@ -4,7 +4,7 @@
 namespace Golly\Elastic\Observers;
 
 
-use Golly\Elastic\Eloquent\Searchable;
+use Golly\Elastic\Eloquent\HasElasticsearch;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -16,7 +16,7 @@ class ModelObserver
     /**
      * Handle the saved event for the model.
      *
-     * @param Model|Searchable $model
+     * @param Model|HasElasticsearch $model
      * @return void
      */
     public function saved($model)
@@ -33,7 +33,7 @@ class ModelObserver
     /**
      * Handle the deleted event for the model.
      *
-     * @param Model|Searchable $model
+     * @param Model|HasElasticsearch $model
      * @return void
      */
     public function deleted($model)
@@ -48,7 +48,7 @@ class ModelObserver
     /**
      * Handle the force deleted event for the model.
      *
-     * @param Model|Searchable $model
+     * @param Model|HasElasticsearch $model
      * @return void
      */
     public function forceDeleted($model)
@@ -59,7 +59,7 @@ class ModelObserver
     /**
      * Handle the restored event for the model.
      *
-     * @param Model|Searchable $model
+     * @param Model|HasElasticsearch $model
      * @return void
      */
     public function restored($model)

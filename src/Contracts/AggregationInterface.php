@@ -11,5 +11,8 @@ namespace Golly\Elastic\Contracts;
 interface AggregationInterface extends Arrayable
 {
 
+    /**
+     * @return string
+     */
     public function getName();
 }

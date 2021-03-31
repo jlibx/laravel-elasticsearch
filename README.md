@@ -7,8 +7,8 @@
 namespace App\Entities;
 
 
-use Golly\Elastic\Entity;
-use Golly\Elastic\Annotations\Mapping;
+use Golly\Elastic\Hydrate\Entity;
+use Golly\Elastic\Hydrate\Annotations\Mapping;
 use Golly\Elastic\Exceptions\ElasticException;
 
 /**
@@ -67,15 +67,16 @@ class UserEntity extends Entity
 
     /**
      * @param array $data
+     * @param boolean $original
      * @return UserEntity
      * @throws ElasticException
      */
-    public function toObject(array $data)
+    public function toObject(array $data, $original = true)
     {
-        $entity = parent::toObject($data);
+        $entity = parent::toObject($data, $original);
         if ($entity->address) {
             foreach ($entity->address as &$address) {
-                $address = UserAddressEntity::instance($address);
+                $address = UserAddressEntity::instance($address, $original);
             }
         }
 
@@ -114,54 +115,119 @@ array:4 [
   ]
 ]
 ```
+## 如何检索
 
+在orm中，可直接用DB门面类来执行MySQL操作，相当于实例化`Illuminate\Database\Query\Builder`类。
 
-### 如何查询
+那么ES应该也可以这样操作，所以我也加入了一个`ElasticBuilder`类
 
-在实例中引用
-
+当然`Model`模型依赖可以按原来的方式操作，最终都是`ElasticBuilder`来构造查询参数
 ```php
-<?php
-namespace App\Models;
+(new ElasticBuilder())
+    ->select(['id'])
+    ->from('index')
+    ->where(function (ElasticBuilder $query) {
+        $query->where('name', '张三');
+    })->should(function (ElasticBuilder $query) {
+        $query->where(
+            'id', 1
+        )->where(
+            'id', 2
+        );
+    })->whereNotIn(
+        'name', ['李四']
+    )->dd();
 
-use Golly\Elastic\Eloquent\Searchable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-
-class User extends Model{
-    use Searchable;
-    
-    
-    /**
-     * @param Builder $query
-     * @return void
-     */
-    protected function beforeAllSearchable(Builder $query)
-    {
-        $query->with(['tokens']);
-    }
-}
+User::elastic()
+    ->where(function (Builder $query) {
+        $query->where('name', '张三');
+    })->should(function (Builder $query) {
+        $query->where(
+            'id', 1
+        )->where(
+            'id', 2
+        );
+    })->whereNotIn(
+        'name', ['李四']
+    )->dd();
+```
+最终打印的结果是（这里我仅贴了一个，唯一 的区别就是'index'不同）
+```bash
+array:3 [
+  "index" => "index"
+  "_source" => array:1 [
+    0 => "id"
+  ]
+  "body" => array:1 [
+    "query" => array:1 [
+      "bool" => array:3 [
+        "must" => array:1 [
+          0 => array:1 [
+            "bool" => array:1 [
+              "must" => array:1 [
+                0 => array:1 [
+                  "term" => array:1 [
+                    "name" => "张三"
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+        "should" => array:1 [
+          0 => array:1 [
+            "bool" => array:1 [
+              "must" => array:2 [
+                0 => array:1 [
+                  "term" => array:1 [
+                    "id" => "1"
+                  ]
+                ]
+                1 => array:1 [
+                  "term" => array:1 [
+                    "id" => "2"
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+        "must_not" => array:1 [
+          0 => array:1 [
+            "terms" => array:1 [
+              "name" => array:1 [
+                0 => "李四"
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]
+  ]
+]
 ```
 
-```php
-<?php
-use App\Models\User;
-use Golly\Elastic\DSL\Queries\BoolQuery;
+直接通过ES检索数据
 
-$users = User::newElastic()
-    ->select(['id', 'name'])
-    ->where('is_active', true)
-    ->where(function (BoolQuery $query) {
-        $query->orWhereLike('title', 'PHP')
-            ->orWhereLike('title', 'JAVA');
-    })
-    ->whereHas('roles', function (BoolQuery $query) {
-        $query->where('name', 'admin');
-    })
-    ->whereLike('name', '茅台小王子')
-    ->orderBy('id')
-    ->sum('id')
-    ->raw();
-
-?>
 ```
+User::elastic()->getRaw()
+```
+
+通过ES检索数据后，执行MySQL查询
+```
+User::elastic()->get();
+```
+该操作支持`with`,`withCount`
+
+
+直接通过ES检索数据后分页
+```
+User::elastic()->paginateRaw();
+```
+
+通过ES检索后，执行MySQL查询并分页
+
+```
+User::elastic()->paginate();
+```
+

@@ -12,15 +12,9 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class ModelImported
 {
-    /**
-     * @var Collection
-     */
+
     public $models;
 
-    /**
-     * ModelImported constructor.
-     * @param $models
-     */
     public function __construct(Collection $models)
     {
         $this->models = $models;

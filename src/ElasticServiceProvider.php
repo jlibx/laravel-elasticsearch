@@ -4,8 +4,8 @@
 namespace Golly\Elastic;
 
 
-use Golly\Elastic\Console\ModelFlush;
 use Golly\Elastic\Console\ModelImport;
+use Golly\Elastic\Console\ModelRemove;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -14,9 +14,17 @@ use Illuminate\Support\ServiceProvider;
  */
 class ElasticServiceProvider extends ServiceProvider
 {
+
     /**
-     * Register the service provider.
-     *
+     * Bootstrap any application services.
+     * @return void
+     */
+    public function boot()
+    {
+        $this->publishConfigure();
+    }
+
+    /**
      * @return void
      */
     public function register()
@@ -24,8 +32,23 @@ class ElasticServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 ModelImport::class,
-                ModelFlush::class
+                ModelRemove::class
             ]);
+        }
+        $this->mergeConfigFrom(__DIR__ . '/../config/elastic.php', 'elastic');
+    }
+
+    /**
+     * 发布配置文件
+     *
+     * @return void
+     */
+    protected function publishConfigure()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config/elastic.php' => config_path('elastic.php'),
+            ], 'elastic-config');
         }
     }
 }

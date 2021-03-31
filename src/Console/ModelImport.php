@@ -4,11 +4,11 @@
 namespace Golly\Elastic\Console;
 
 
-use Golly\Elastic\Eloquent\Searchable;
+use Golly\Elastic\Eloquent\HasElasticsearch;
 use Golly\Elastic\Events\ModelImported;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Events\Dispatcher;
 
 /**
  * Class ModelImport
@@ -23,7 +23,7 @@ class ModelImport extends Command
      */
     protected $signature = 'es:import
             {model : Class name of model to bulk import}
-            {--c|chunk= : The number of records to import at a time (Defaults to configuration value: `scout.chunk.searchable`)}';
+            {--c|chunk= : The number of records to import at a time (Defaults to configuration value: `elastic.chunk`)}';
 
     /**
      * The console command description.
@@ -43,12 +43,12 @@ class ModelImport extends Command
         $class = $this->argument('model');
         $events->listen(ModelImported::class, function ($event) use ($class) {
             /**
-             * @var Model|Searchable $model
+             * @var Model|HasElasticsearch $model
              */
             $model = $event->models->last();
-            $this->comment('Imported [' . $class . '] models up to ID: ' . $model->getSearchableKey());
+            $this->comment('Imported [' . $class . '] models up to ID: ' . $model->getSearchKey());
         });
-        (new $class)->makeAllSearchable($this->option('chunk'));
+        (new $class)->allSearchable($this->option('chunk'));
 
         $events->forget(ModelImported::class);
 
