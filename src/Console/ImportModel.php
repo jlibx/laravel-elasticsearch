@@ -5,9 +5,7 @@ namespace Golly\Elastic\Console;
 
 
 use Golly\Elastic\Eloquent\HasElasticsearch;
-use Golly\Elastic\Events\ModelSearchable;
 use Illuminate\Console\Command;
-use Illuminate\Events\Dispatcher;
 
 /**
  * Class ImportModel

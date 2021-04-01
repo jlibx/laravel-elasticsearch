@@ -106,7 +106,7 @@ trait HasElasticsearch
     {
         if ($this->useSoftDelete()) {
             /** @var static|SoftDeletes $this */
-            $this->addSearchMetadata('__soft_deleted', $this->trashed() ? 1 : 0);
+            $this->addSearchMetadata('soft_deleted', $this->trashed() ? 1 : 0);
         }
     }
 
