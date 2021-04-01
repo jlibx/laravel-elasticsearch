@@ -34,16 +34,13 @@ class ImportModel extends Command
     /**
      * Execute the console command.
      *
-     * @param Dispatcher $events
      * @return void
      */
-    public function handle(Dispatcher $events)
+    public function handle()
     {
         /** @var HasElasticsearch $class */
         $class = $this->argument('model');
         $class::makeAllSearchable($this->option('chunk'));
-
-        $events->forget(ModelSearchable::class);
 
         $this->info('All [' . $class . '] records have been imported.');
     }

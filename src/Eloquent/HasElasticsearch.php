@@ -218,9 +218,7 @@ trait HasElasticsearch
         $chunk = $chunk ?? config('elastic.chunk');
         $self->newQuery()->when(true, function ($query) use ($self) {
             $self->beforeAllSearchable($query);
-        })->orderBy(
-            $self->getKeyName()
-        )->chunk($chunk, function (Collection $models) use ($self) {
+        })->chunkById($chunk, function (Collection $models) use ($self) {
             $self->newElasticPrimaryQuery()->update($models);
         });
     }
@@ -235,7 +233,7 @@ trait HasElasticsearch
         $chunk = $chunk ?? config('elastic.chunk');
         $self->newQuery()->orderBy(
             $self->getKeyName()
-        )->chunk($chunk, function (Collection $models) use ($self) {
+        )->chunkById($chunk, function (Collection $models) use ($self) {
             $self->newElasticPrimaryQuery()->delete($models);
         });
     }

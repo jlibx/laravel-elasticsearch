@@ -608,6 +608,14 @@ class ElasticBuilder
     }
 
     /**
+     * @return void
+     */
+    public function dd()
+    {
+        dd($this->toSearchParams());
+    }
+
+    /**
      * Prepare the value and operator for a where clause.
      *
      * @param mixed $value

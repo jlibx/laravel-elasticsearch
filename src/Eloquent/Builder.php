@@ -210,17 +210,8 @@ class Builder
     /**
      * @param array $columns
      * @param array $options
-     * @return ElasticEntity
-     */
-    public function getRaw(array $columns = [], array $options = [])
-    {
-        return $this->query->addSelect($columns)->get($options);
-    }
-
-    /**
-     * @param array $columns
-     * @param array $options
      * @return Collection
+     * @throws ElasticException
      */
     public function get(array $columns = [], array $options = [])
     {
@@ -229,30 +220,45 @@ class Builder
         return $this->toCollection($entity);
     }
 
+
     /**
      * @param array $columns
      * @param array $options
      * @return ElasticEntity
+     * @throws ElasticException
      */
-    public function first(array $columns = [], array $options = [])
+    public function getRaw(array $columns = [], array $options = [])
     {
-        return $this->query->select($columns)->first($options);
+        if ($this->model->useSoftDelete()) {
+            $this->query->where('__soft_deleted', 0);
+        }
+        return $this->query->addSelect($columns)->get($options);
     }
 
     /**
-     * @param null $perPage
      * @param array $columns
-     * @param string $pageName
-     * @param null $page
-     * @return LengthAwarePaginator
+     * @param array $options
+     * @return Model|null
+     * @throws ElasticException
      */
-    public function paginateRaw($perPage = null, $columns = [], $pageName = 'page', $page = null)
+    public function first(array $columns = [], array $options = [])
     {
-        [$page, $prePage] = $this->prepareCurrentPage($perPage, $pageName, $page);
-        $offset = ($page - 1) * $prePage;
-        $entity = $this->query->offset($offset)->limit($prePage)->get($columns);
+        $this->query->limit(1);
 
-        return $entity->paginate($prePage, $page);
+        return $this->get($columns, $options)->first();
+    }
+
+    /**
+     * @param array $columns
+     * @param array $options
+     * @return ElasticEntity
+     * @throws ElasticException
+     */
+    public function firstRaw(array $columns = [], array $options = [])
+    {
+        $this->query->limit(1);
+
+        return $this->getRaw($columns, $options);
     }
 
     /**
@@ -273,11 +279,29 @@ class Builder
     }
 
     /**
+     * @param null $perPage
+     * @param array $columns
+     * @param string $pageName
+     * @param null $page
+     * @return LengthAwarePaginator
+     * @throws ElasticException
+     */
+    public function paginateRaw($perPage = null, $columns = [], $pageName = 'page', $page = null)
+    {
+        [$page, $prePage] = $this->prepareCurrentPage($perPage, $pageName, $page);
+        $offset = ($page - 1) * $prePage;
+        $this->query->offset($offset)->limit($prePage);
+        $entity = $this->getRaw($columns);
+
+        return $entity->paginate($prePage, $page);
+    }
+
+    /**
      * @return void
      */
     public function dd()
     {
-        dd($this->toSearchParams());
+        $this->query->dd();
     }
 
     /**
@@ -299,15 +323,11 @@ class Builder
     /**
      * @param Model|HasElasticsearch $model
      * @return $this
-     * @throws ElasticException
      */
     public function setModel($model)
     {
         $this->model = $model;
         $this->query->from($model->getSearchIndex());
-        if ($model->useSoftDelete()) {
-            $this->query->where('__soft_deleted', 0);
-        }
 
         return $this;
     }
