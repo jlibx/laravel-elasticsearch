@@ -210,29 +210,28 @@ class Builder
     /**
      * @param array $columns
      * @param array $options
+     * @return ElasticEntity
+     * @throws ElasticException
+     */
+    public function raw(array $columns = [], array $options = [])
+    {
+        if ($this->model->useSoftDelete()) {
+            $this->query->where('soft_deleted', false);
+        }
+        return $this->query->select($columns)->get($options);
+    }
+
+    /**
+     * @param array $columns
+     * @param array $options
      * @return Collection
      * @throws ElasticException
      */
     public function get(array $columns = [], array $options = [])
     {
-        $entity = $this->getRaw($columns, $options);
+        $entity = $this->raw($columns, $options);
 
         return $this->toCollection($entity);
-    }
-
-
-    /**
-     * @param array $columns
-     * @param array $options
-     * @return ElasticEntity
-     * @throws ElasticException
-     */
-    public function getRaw(array $columns = [], array $options = [])
-    {
-        if ($this->model->useSoftDelete()) {
-            $this->query->where('soft_deleted', false);
-        }
-        return $this->query->addSelect($columns)->get($options);
     }
 
     /**
@@ -254,11 +253,11 @@ class Builder
      * @return ElasticEntity
      * @throws ElasticException
      */
-    public function firstRaw(array $columns = [], array $options = [])
+    public function rawFirst(array $columns = [], array $options = [])
     {
         $this->query->limit(1);
 
-        return $this->getRaw($columns, $options);
+        return $this->raw($columns, $options);
     }
 
     /**
@@ -267,12 +266,14 @@ class Builder
      * @param string $pageName
      * @param null $page
      * @return LengthAwarePaginator
+     * @throws ElasticException
      */
     public function paginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
     {
         [$page, $prePage] = $this->prepareCurrentPage($perPage, $pageName, $page);
         $offset = ($page - 1) * $prePage;
-        $entity = $this->query->addSelect($columns)->offset($offset)->limit($prePage)->get();
+        $this->query->offset($offset)->limit($prePage);
+        $entity = $this->raw($columns);
         $collection = $this->toCollection($entity);
 
         return $entity->paginate($prePage, $page, $collection);
@@ -286,12 +287,12 @@ class Builder
      * @return LengthAwarePaginator
      * @throws ElasticException
      */
-    public function paginateRaw($perPage = null, $columns = [], $pageName = 'page', $page = null)
+    public function rawPaginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
     {
         [$page, $prePage] = $this->prepareCurrentPage($perPage, $pageName, $page);
         $offset = ($page - 1) * $prePage;
         $this->query->offset($offset)->limit($prePage);
-        $entity = $this->getRaw($columns);
+        $entity = $this->raw($columns);
 
         return $entity->paginate($prePage, $page);
     }
