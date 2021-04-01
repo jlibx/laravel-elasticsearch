@@ -106,7 +106,7 @@ trait HasElasticsearch
     {
         if ($this->useSoftDelete()) {
             /** @var static|SoftDeletes $this */
-            $this->addSearchMetadata('soft_deleted', $this->trashed() ? 1 : 0);
+            $this->addSearchMetadata('soft_deleted', $this->trashed());
         }
     }
 
@@ -216,9 +216,12 @@ trait HasElasticsearch
     {
         $self = new static();
         $chunk = $chunk ?? config('elastic.chunk');
+        $softDelete = $self->useSoftDelete();
         $self->newQuery()->when(true, function ($query) use ($self) {
             $self->beforeAllSearchable($query);
-        })->chunkById($chunk, function (Collection $models) use ($self) {
+        })->when($softDelete, function ($query) {
+            $query->withTrashed();
+        })->chunkById($chunk, function ($models) use ($self) {
             $self->newElasticPrimaryQuery()->update($models);
         });
     }

@@ -230,7 +230,7 @@ class Builder
     public function getRaw(array $columns = [], array $options = [])
     {
         if ($this->model->useSoftDelete()) {
-            $this->query->where('soft_deleted', 0);
+            $this->query->where('soft_deleted', false);
         }
         return $this->query->addSelect($columns)->get($options);
     }
