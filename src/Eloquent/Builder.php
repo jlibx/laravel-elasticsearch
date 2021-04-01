@@ -252,7 +252,7 @@ class Builder
         $offset = ($page - 1) * $prePage;
         $entity = $this->query->offset($offset)->limit($prePage)->get($columns);
 
-        return $entity->toPaginator($prePage, $page);
+        return $entity->paginate($prePage, $page);
     }
 
     /**
@@ -269,7 +269,7 @@ class Builder
         $entity = $this->query->addSelect($columns)->offset($offset)->limit($prePage)->get();
         $collection = $this->toCollection($entity);
 
-        return $entity->toPaginator($prePage, $page, $collection);
+        return $entity->paginate($prePage, $page, $collection);
     }
 
     /**
@@ -299,11 +299,15 @@ class Builder
     /**
      * @param Model|HasElasticsearch $model
      * @return $this
+     * @throws ElasticException
      */
     public function setModel($model)
     {
         $this->model = $model;
         $this->query->from($model->getSearchIndex());
+        if ($model->useSoftDelete()) {
+            $this->query->where('__soft_deleted', 0);
+        }
 
         return $this;
     }

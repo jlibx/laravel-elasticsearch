@@ -4,8 +4,8 @@
 namespace Golly\Elastic;
 
 
-use Golly\Elastic\Console\ModelImport;
-use Golly\Elastic\Console\ModelRemove;
+use Golly\Elastic\Console\ImportModel;
+use Golly\Elastic\Console\RemoveModel;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -31,8 +31,8 @@ class ElasticServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                ModelImport::class,
-                ModelRemove::class
+                ImportModel::class,
+                RemoveModel::class
             ]);
         }
         $this->mergeConfigFrom(__DIR__ . '/../config/elastic.php', 'elastic');

@@ -79,10 +79,10 @@ class ElasticEngine implements EngineInterface
                     '_index' => $model->getSearchIndex(),
                 ]
             ];
-            // TODO 软删删除
+            $model->pushSoftDeleteMetadata();
             $params['body'][] = [
                 'doc' => array_merge(
-                    $model->toSearchSource(),
+                    $model->toSearchArray(),
                     $model->getSearchMetadata()
                 ),
                 'doc_as_upsert' => true

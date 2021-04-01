@@ -4,13 +4,14 @@
 namespace Golly\Elastic\Console;
 
 
+use Golly\Elastic\Eloquent\HasElasticsearch;
 use Illuminate\Console\Command;
 
 /**
- * Class ModelRemove
+ * Class RemoveModel
  * @package Golly\Elastic\Console
  */
-class ModelRemove extends Command
+class RemoveModel extends Command
 {
     /**
      * The name and signature of the console command.
@@ -33,9 +34,9 @@ class ModelRemove extends Command
      */
     public function handle()
     {
+        /** @var HasElasticsearch $class */
         $class = $this->argument('model');
-
-        (new $class)->removeAllSearchable();
+        $class::makeAllUnsearchable();
 
         $this->info('All [' . $class . '] records have been removed.');
     }

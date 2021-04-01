@@ -15,6 +15,7 @@ use Golly\Elastic\Endpoints\SortEndpoint;
 use Golly\Elastic\Exceptions\ElasticException;
 use Golly\Elastic\Queries\Compound\BoolQuery;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 /**
@@ -548,6 +549,24 @@ class ElasticBuilder
     public function first(array $options = [])
     {
         return $this->limit(1)->get($options);
+    }
+
+    /**
+     * @param Collection $models
+     * @return void
+     */
+    public function update(Collection $models)
+    {
+        $this->getElasticEngine()->update($models);
+    }
+
+    /**
+     * @param Collection $models
+     * @return void
+     */
+    public function delete(Collection $models)
+    {
+        $this->getElasticEngine()->delete($models);
     }
 
     /**

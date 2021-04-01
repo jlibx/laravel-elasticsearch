@@ -8,34 +8,35 @@ use Golly\Elastic\ElasticEngine;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Class RemoveSearchable
+ * Class MakeUnsearchable
  * @package Golly\Elastic\Jobs
  */
-class RemoveSearchable implements ShouldQueue
+class MakeUnsearchable implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * The models to be made searchable.
      *
-     * @var Collection
+     * @var Model
      */
-    public $models;
+    public $model;
 
     /**
      * Create a new job instance.
      *
-     * @param Collection $models
+     * @param Model $model
      * @return void
      */
-    public function __construct(Collection $models)
+    public function __construct(Model $model)
     {
-        $this->models = $models;
+        $this->model = $model;
     }
 
     /**
@@ -44,6 +45,6 @@ class RemoveSearchable implements ShouldQueue
      */
     public function handle(ElasticEngine $engine)
     {
-        $engine->delete($this->models);
+        $engine->delete(new Collection($this->model));
     }
 }

@@ -65,7 +65,7 @@ class ElasticEntity extends Entity
      * @param Collection|null $items
      * @return LengthAwarePaginator
      */
-    public function toPaginator($prePage, $currentPage, Collection $items = null)
+    public function paginate($prePage, $currentPage, Collection $items = null)
     {
         $items = is_null($items) ? $this->source : $items;
 
@@ -73,4 +73,5 @@ class ElasticEntity extends Entity
             $items, $this->total, $prePage, $currentPage
         );
     }
+
 }

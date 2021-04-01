@@ -5,16 +5,15 @@ namespace Golly\Elastic\Console;
 
 
 use Golly\Elastic\Eloquent\HasElasticsearch;
-use Golly\Elastic\Events\ModelImported;
+use Golly\Elastic\Events\ModelSearchable;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;
 
 /**
- * Class ModelImport
+ * Class ImportModel
  * @package Golly\Elastic\Console
  */
-class ModelImport extends Command
+class ImportModel extends Command
 {
     /**
      * The name and signature of the console command.
@@ -40,17 +39,11 @@ class ModelImport extends Command
      */
     public function handle(Dispatcher $events)
     {
+        /** @var HasElasticsearch $class */
         $class = $this->argument('model');
-        $events->listen(ModelImported::class, function ($event) use ($class) {
-            /**
-             * @var Model|HasElasticsearch $model
-             */
-            $model = $event->models->last();
-            $this->comment('Imported [' . $class . '] models up to ID: ' . $model->getSearchKey());
-        });
-        (new $class)->allSearchable($this->option('chunk'));
+        $class::makeAllSearchable($this->option('chunk'));
 
-        $events->forget(ModelImported::class);
+        $events->forget(ModelSearchable::class);
 
         $this->info('All [' . $class . '] records have been imported.');
     }
