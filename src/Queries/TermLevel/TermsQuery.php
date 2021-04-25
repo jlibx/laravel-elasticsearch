@@ -37,7 +37,7 @@ class TermsQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return $this->merge([
             $this->field => $this->value,

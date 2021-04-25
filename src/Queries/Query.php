@@ -32,7 +32,7 @@ abstract class Query implements QueryInterface
     /**
      * @return mixed
      */
-    abstract public function getOutput();
+    abstract public function getTypeValue();
 
     /**
      * @return array
@@ -40,7 +40,7 @@ abstract class Query implements QueryInterface
     public function toArray()
     {
         return [
-            $this->getType() => $this->getOutput()
+            $this->getType() => $this->getTypeValue()
         ];
     }
 }

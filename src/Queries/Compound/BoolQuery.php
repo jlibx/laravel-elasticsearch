@@ -44,7 +44,7 @@ class BoolQuery extends Query
     /**
      * @return array|stdClass
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         $output = [];
         foreach ($this->wheres as $type => $queries) {

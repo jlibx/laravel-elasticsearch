@@ -56,7 +56,7 @@ class BoostingQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return [
             'positive' => $this->positive->toArray(),

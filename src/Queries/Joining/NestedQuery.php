@@ -47,7 +47,7 @@ class NestedQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return $this->merge([
             'path' => $this->path,

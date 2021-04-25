@@ -22,7 +22,7 @@ class GeoShapeQuery extends Query
     }
 
 
-    public function getOutput()
+    public function getTypeValue()
     {
         // TODO: Implement output() method.
     }

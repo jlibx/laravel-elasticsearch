@@ -33,7 +33,7 @@ class ExistsQuery extends Query
     /**
      * @return mixed|string
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return $this->field;
     }

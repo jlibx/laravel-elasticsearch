@@ -36,7 +36,7 @@ class SimpleQueryStringQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return $this->merge([
             'query' => $this->value

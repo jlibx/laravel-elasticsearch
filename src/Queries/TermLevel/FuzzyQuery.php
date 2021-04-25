@@ -37,7 +37,7 @@ class FuzzyQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return [
             $this->field => $this->merge([

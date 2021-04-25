@@ -51,7 +51,7 @@ class DisMaxQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         $queries = [];
         foreach ($this->queries as $type) {

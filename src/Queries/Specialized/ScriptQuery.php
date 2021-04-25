@@ -39,7 +39,7 @@ class ScriptQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return [
             'script' => $this->merge([

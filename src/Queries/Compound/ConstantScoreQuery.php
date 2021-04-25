@@ -41,7 +41,7 @@ class ConstantScoreQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return $this->merge([
             'filter' => $this->query->toArray()

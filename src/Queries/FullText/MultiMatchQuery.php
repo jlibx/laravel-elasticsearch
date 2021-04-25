@@ -42,7 +42,7 @@ class MultiMatchQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         $query = [
             'query' => $this->value,

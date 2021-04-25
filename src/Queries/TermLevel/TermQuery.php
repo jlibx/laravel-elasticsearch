@@ -38,7 +38,7 @@ class TermQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         if (empty($this->params)) {
             $params = $this->value;

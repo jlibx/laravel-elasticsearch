@@ -47,7 +47,7 @@ class ParentIdQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return $this->merge([
             'id' => $this->id,

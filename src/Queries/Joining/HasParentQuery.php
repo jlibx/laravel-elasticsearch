@@ -48,7 +48,7 @@ class HasParentQuery extends Query
     /**
      * @return array
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return $this->merge([
             'parent_type' => $this->parentType,

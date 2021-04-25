@@ -33,7 +33,7 @@ class MatchAllQuery extends Query
     /**
      * @return array|stdClass
      */
-    public function getOutput()
+    public function getTypeValue()
     {
         return $this->params ?: new stdClass();
     }
