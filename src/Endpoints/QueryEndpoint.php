@@ -121,11 +121,11 @@ class QueryEndpoint extends Endpoint
     /**
      * @param string $field
      * @param string $operator
-     * @param $value
-     * @param $boolType
+     * @param mixed $value
+     * @param string $boolType
      * @return void
      */
-    public function addOpticalToBoolQuery(string $field, string $operator, $value, $boolType)
+    public function addOpticalToBoolQuery(string $field, string $operator, $value, string $boolType)
     {
         $field = $this->prepareRelationField($field);
         if ($query = $this->toQuery($field, $operator, $value)) {

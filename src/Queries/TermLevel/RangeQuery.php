@@ -30,6 +30,19 @@ class RangeQuery extends Query
     }
 
     /**
+     * @param array ranges
+     * @return $this
+     */
+    public function setRanges(array $ranges)
+    {
+        foreach ($ranges as $key => $value) {
+            $this->addParam($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getType()

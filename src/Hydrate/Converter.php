@@ -40,7 +40,7 @@ class Converter
      * @param string $type
      * @return string
      */
-    public static function toElasticType(string $type)
+    public static function toElasticType(string $type): string
     {
         switch ($type) {
             case 'int':
@@ -71,7 +71,7 @@ class Converter
      * @param string|null $format
      * @return string|null
      */
-    public static function toElasticFormat(string $format = null)
+    public static function toElasticFormat(?string $format): ?string
     {
         switch ($format) {
             case 'Y':
@@ -89,7 +89,7 @@ class Converter
      * @param string|null $analyzer
      * @return string|null
      */
-    public static function toElasticAnalyzer(string $analyzer = null)
+    public static function toElasticAnalyzer(?string $analyzer): ?string
     {
         return in_array($analyzer, self::$analyzers) ? $analyzer : null;
     }

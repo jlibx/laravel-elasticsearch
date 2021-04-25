@@ -3,7 +3,7 @@
 
 namespace Golly\Elastic\Hydrate;
 
-use Golly\Elastic\Hydrate\Annotations\Source;
+use Golly\Hydrate\Annotations\Source;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;

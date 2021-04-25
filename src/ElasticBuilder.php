@@ -143,7 +143,7 @@ class ElasticBuilder
      */
     public function select(array $columns = [])
     {
-        $this->columns = is_array($columns) ? $columns : func_get_args();
+        $this->columns = $columns;
 
         return $this;
     }
@@ -154,33 +154,20 @@ class ElasticBuilder
      */
     public function addSelect(array $columns = [])
     {
-        $columns = is_array($columns) ? $columns : func_get_args();
         $this->columns = array_merge($this->columns, $columns);
 
         return $this;
     }
 
     /**
-     * @param string $column
-     * @param null $operator
-     * @param null $value
-     * @return $this
-     * @throws ElasticException
-     */
-    public function must(string $column, $operator = null, $value = null)
-    {
-        return $this->where($column, $operator, $value);
-    }
-
-    /**
-     * @param $column
-     * @param null $operator
-     * @param null $value
+     * @param mixed $column
+     * @param string|mixed $operator
+     * @param mixed $value
      * @param string $type
      * @return $this
      * @throws ElasticException
      */
-    public function where($column, $operator = null, $value = null, $type = 'must')
+    public function where($column, string $operator = null, $value = null, string $type = 'must')
     {
         if (is_array($column)) {
             return $this->addArrayOfWheres($column, $type);
@@ -205,27 +192,27 @@ class ElasticBuilder
         if (in_array($operator, ['!=', '<>'])) {
             $type = 'must_not';
         }
-        $this->queryEndpoint->addOpticalToBoolQuery($column, $operator, $value, $type);
+        $this->queryEndpoint->addOpticalToBoolQuery((string)$column, $operator, $value, $type);
 
         return $this;
     }
 
     /**
-     * @param $column
-     * @param null $operator
+     * @param string $column
+     * @param mixed $operator
      * @param null $value
      * @return $this
      * @throws ElasticException
      */
-    public function should($column, $operator = null, $value = null)
+    public function must(string $column, $operator = null, $value = null)
     {
-        return $this->orWhere($column, $operator, $value);
+        return $this->where($column, $operator, $value);
     }
 
     /**
-     * @param $column
-     * @param null $operator
-     * @param null $value
+     * @param mixed $column
+     * @param mixed $operator
+     * @param mixed $value
      * @return $this
      * @throws ElasticException
      */
@@ -236,6 +223,18 @@ class ElasticBuilder
         );
 
         return $this->where($column, $operator, $value, BoolQuery::SHOULD);
+    }
+
+    /**
+     * @param mixed $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     * @throws ElasticException
+     */
+    public function should($column, $operator = null, $value = null)
+    {
+        return $this->orWhere($column, $operator, $value);
     }
 
     /**
@@ -438,11 +437,11 @@ class ElasticBuilder
     }
 
     /**
-     * @param $column
+     * @param string $column
      * @return $this
      * @throws ElasticException
      */
-    public function orderByDesc($column)
+    public function orderByDesc(string $column)
     {
         return $this->orderBy($column, 'desc');
     }
@@ -539,7 +538,7 @@ class ElasticBuilder
      */
     public function get(array $options = [])
     {
-        return $this->getElasticEngine()->search($options);
+        return $this->newElasticEngine()->search($options);
     }
 
     /**
@@ -557,7 +556,7 @@ class ElasticBuilder
      */
     public function update(Collection $models)
     {
-        $this->getElasticEngine()->update($models);
+        $this->newElasticEngine()->update($models);
     }
 
     /**
@@ -566,13 +565,13 @@ class ElasticBuilder
      */
     public function delete(Collection $models)
     {
-        $this->getElasticEngine()->delete($models);
+        $this->newElasticEngine()->delete($models);
     }
 
     /**
      * @return ElasticEngine
      */
-    public function getElasticEngine(): ElasticEngine
+    public function newElasticEngine(): ElasticEngine
     {
         if (!$this->elasticEngine) {
             $this->elasticEngine = new ElasticEngine();
