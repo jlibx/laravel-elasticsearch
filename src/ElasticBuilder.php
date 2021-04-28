@@ -161,13 +161,13 @@ class ElasticBuilder
 
     /**
      * @param mixed $column
-     * @param string|mixed $operator
+     * @param mixed $operator
      * @param mixed $value
      * @param string $type
      * @return $this
      * @throws ElasticException
      */
-    public function where($column, string $operator = null, $value = null, string $type = 'must')
+    public function where($column, $operator = null, $value = null, string $type = 'must')
     {
         if (is_array($column)) {
             return $this->addArrayOfWheres($column, $type);
