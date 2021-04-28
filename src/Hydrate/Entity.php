@@ -23,4 +23,12 @@ class Entity extends HydrateEntity
         return $self->newReflection()->map($self);
     }
 
+    /**
+     * @return Reflection
+     */
+    protected function newReflection()
+    {
+        return new Reflection();
+    }
+
 }
