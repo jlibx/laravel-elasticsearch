@@ -216,8 +216,13 @@ class Builder
     public function raw(array $columns = [], array $options = [])
     {
         if ($this->model->useSoftDelete()) {
-            $this->query->where('soft_deleted', false);
+            $this->query->where(
+                $this->model->getSoftDeletedColumn(),
+                '!=',
+                $this->model->getSoftDeletedValue()
+            );
         }
+
         return $this->query->select($columns)->get($options);
     }
 

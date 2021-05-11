@@ -106,8 +106,24 @@ trait HasElasticsearch
     {
         if ($this->useSoftDelete()) {
             /** @var static|SoftDeletes $this */
-            $this->addSearchMetadata('soft_deleted', $this->trashed());
+            $this->addSearchMetadata($this->getSoftDeletedColumn(), $this->trashed());
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getSoftDeletedColumn()
+    {
+        return 'soft_deleted';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSoftDeletedValue()
+    {
+        return false;
     }
 
     /**
