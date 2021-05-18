@@ -30,7 +30,7 @@ class ElasticEntity extends Entity
     public $timedOut = false;
 
     /**
-     * @Source(field="hits.total.value")
+     * @Source(field="hits.total")
      * @var int
      */
     public $total = 0;
@@ -79,9 +79,8 @@ class ElasticEntity extends Entity
     public function paginate($prePage, $currentPage, Collection $items = null)
     {
         $items = is_null($items) ? $this->source : $items;
-        // 自定义总数
-        if (method_exists($this, 'customTotal')) {
-            $this->total = $this->customTotal();
+        if (is_array($this->total)) {
+            $this->total = Arr::get($this->total, 'value', 0);
         }
 
         return new LengthAwarePaginator(
