@@ -52,11 +52,19 @@ class WildcardQuery extends Query
      */
     protected function handleValue(string $value)
     {
-        // 是否包含通配符
-        if (str_contains($value, '?') || str_contains($value, '*')) {
+        if ($this->hasMatched($value)) {
             return $value;
         }
 
         return '*' . $value . '*';
+    }
+
+    /**
+     * @param string $value
+     * @return bool
+     */
+    protected function hasMatched(string $value)
+    {
+        return str_starts_with($value, '*') && str_ends_with($value, '*');
     }
 }
