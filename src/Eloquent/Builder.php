@@ -116,13 +116,13 @@ class Builder
     }
 
     /**
-     * @param $column
-     * @param string|null $operator
-     * @param null $value
+     * @param mixed $column
+     * @param mixed $operator
+     * @param mixed $value
      * @return $this
      * @throws ElasticException
      */
-    public function should($column, string $operator = null, $value = null)
+    public function should($column, $operator = null, $value = null)
     {
         return $this->orWhere($column, $operator, $value);
     }
@@ -139,9 +139,9 @@ class Builder
     }
 
     /**
-     * @param $column
-     * @param null $operator
-     * @param null $value
+     * @param mixed $column
+     * @param mixed $operator
+     * @param mixed $value
      * @return $this
      * @throws ElasticException
      */
