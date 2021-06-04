@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Golly\Elastic;
 
@@ -23,12 +24,12 @@ class ElasticEngine implements EngineInterface
     /**
      * @var Client
      */
-    protected $elastic;
+    protected Client $elastic;
 
     /**
      * @var ElasticBuilder
      */
-    protected $builder;
+    protected ElasticBuilder $builder;
 
     /**
      * ElasticEngine constructor.
@@ -40,20 +41,28 @@ class ElasticEngine implements EngineInterface
         )->build();
     }
 
-    public function index()
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function index(array $params = []): self
     {
-        $this->elastic->index();
+        $this->elastic->index($params);
+
+        return $this;
     }
 
     /**
      * @param array $options
      * @return ElasticEntity
      */
-    public function search(array $options = [])
+    public function search(array $options = []): ElasticEntity
     {
         $params = $this->builder->toSearchParams();
         // 记录执行参数
-        Log::info('elasticsearch params ' . json_encode($params));
+        if (app()->environment('local')) {
+            Log::info('elasticsearch params ' . json_encode($params));
+        }
         $result = $this->elastic->search($params);
 
         return ElasticEntity::instance($result, false);
@@ -61,12 +70,12 @@ class ElasticEngine implements EngineInterface
 
     /**
      * @param Collection $models
-     * @return void
+     * @return bool
      */
-    public function update(Collection $models)
+    public function update(Collection $models): bool
     {
         if ($models->isEmpty()) {
-            return;
+            return false;
         }
         $params['body'] = [];
         $models->each(function ($model) use (&$params) {
@@ -90,16 +99,17 @@ class ElasticEngine implements EngineInterface
         });
 
         $this->elastic->bulk($params);
+
+        return true;
     }
 
     /**
      * @param Collection $models
-     * @return void
+     * @return bool
      */
-    public function delete(Collection $models)
+    public function delete(Collection $models): bool
     {
         $params['body'] = [];
-
         $models->each(function ($model) use (&$params) {
             $params['body'][] = [
                 'delete' => [
@@ -110,14 +120,19 @@ class ElasticEngine implements EngineInterface
         });
 
         $this->elastic->bulk($params);
+
+        return true;
     }
 
     /**
      * @param ElasticBuilder $builder
+     * @return $this
      */
-    public function setBuilder(ElasticBuilder $builder)
+    public function setBuilder(ElasticBuilder $builder): static
     {
         $this->builder = $builder;
+
+        return $this;
     }
 
 }

@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic;
 
@@ -13,6 +13,7 @@ use Golly\Elastic\Endpoints\HighlightEndpoint;
 use Golly\Elastic\Endpoints\QueryEndpoint;
 use Golly\Elastic\Endpoints\SortEndpoint;
 use Golly\Elastic\Exceptions\ElasticException;
+use Golly\Elastic\Hydrate\ElasticEntity;
 use Golly\Elastic\Queries\Compound\BoolQuery;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Collection;
@@ -30,68 +31,68 @@ class ElasticBuilder
      *
      * @var string
      */
-    public $index;
+    public string $index;
 
     /**
      * The columns that should be returned.
      *
      * @var array
      */
-    public $columns = [];
+    public array $columns = [];
 
     /**
      * The number of records to skip.
      *
      * @var int
      */
-    public $offset;
+    public int $offset;
 
     /**
      * The maximum number of records to return.
      *
      * @var int
      */
-    public $limit;
+    public int $limit;
 
     /**
      * @var bool
      */
-    public $explain = false;
+    public bool $explain = false;
 
     /**
-     * @var
+     * @var float
      */
-    public $version;
+    public float $version;
 
     /**
      * @var QueryEndpoint
      */
-    public $queryEndpoint;
+    public QueryEndpoint $queryEndpoint;
 
     /**
      * @var SortEndpoint
      */
-    public $sortEndpoint;
+    public SortEndpoint $sortEndpoint;
 
     /**
      * @var AggregationEndpoint
      */
-    public $aggregationEndpoint;
+    public AggregationEndpoint $aggregationEndpoint;
 
     /**
      * @var HighlightEndpoint
      */
-    public $highlightEndpoint;
+    public HighlightEndpoint $highlightEndpoint;
 
     /**
      * @var ElasticEngine
      */
-    protected $elasticEngine;
+    protected ElasticEngine $elasticEngine;
 
     /**
      * @var string[]
      */
-    protected $operators = [
+    protected array $operators = [
         '=', '>', '>=', '<', '<=', '!=', '<>',
         'term', 'match', 'range',
         'wildcard', 'like'
@@ -100,7 +101,7 @@ class ElasticBuilder
     /**
      * @var string[]
      */
-    protected $params = [
+    protected array $params = [
         'index' => 'index',
         'columns' => '_source',
         'offset' => 'from',
@@ -130,7 +131,7 @@ class ElasticBuilder
      * @param string $index
      * @return $this
      */
-    public function from(string $index)
+    public function from(string $index): static
     {
         $this->index = $index;
 
@@ -141,7 +142,7 @@ class ElasticBuilder
      * @param array $columns
      * @return $this
      */
-    public function select(array $columns = [])
+    public function select(array $columns = []): static
     {
         $this->columns = $columns;
 
@@ -152,7 +153,7 @@ class ElasticBuilder
      * @param array $columns
      * @return $this
      */
-    public function addSelect(array $columns = [])
+    public function addSelect(array $columns = []): static
     {
         $this->columns = array_merge($this->columns, $columns);
 
@@ -167,7 +168,7 @@ class ElasticBuilder
      * @return $this
      * @throws ElasticException
      */
-    public function where($column, $operator = null, $value = null, string $type = 'must')
+    public function where($column, $operator = null, $value = null, string $type = 'must'): static
     {
         if (is_array($column)) {
             return $this->addArrayOfWheres($column, $type);
@@ -182,7 +183,7 @@ class ElasticBuilder
         if ($column instanceof QueryInterface) {
             $this->queryEndpoint->addToBoolQuery($column, $type);
         }
-        if ($this->invalidOperator($operator)) {
+        if ($this->isInvalidOperator($operator)) {
             [$value, $operator] = [$operator, '='];
         }
 
@@ -204,7 +205,7 @@ class ElasticBuilder
      * @return $this
      * @throws ElasticException
      */
-    public function must(string $column, $operator = null, $value = null)
+    public function must(string $column, $operator = null, $value = null): static
     {
         return $this->where($column, $operator, $value);
     }
@@ -216,7 +217,7 @@ class ElasticBuilder
      * @return $this
      * @throws ElasticException
      */
-    public function orWhere($column, $operator = null, $value = null)
+    public function orWhere($column, $operator = null, $value = null): static
     {
         [$value, $operator] = $this->prepareValueAndOperator(
             $value, $operator, func_num_args() === 2
@@ -225,6 +226,7 @@ class ElasticBuilder
         return $this->where($column, $operator, $value, BoolQuery::SHOULD);
     }
 
+
     /**
      * @param mixed $column
      * @param mixed $operator
@@ -232,17 +234,17 @@ class ElasticBuilder
      * @return $this
      * @throws ElasticException
      */
-    public function should($column, $operator = null, $value = null)
+    public function should($column, $operator = null, $value = null): static
     {
         return $this->orWhere($column, $operator, $value);
     }
 
     /**
      * @param string $column
-     * @param Arrayable|array $values
+     * @param array $values
      * @return $this
      */
-    public function whereIn(string $column, $values)
+    public function whereIn(string $column, array $values): static
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -254,10 +256,10 @@ class ElasticBuilder
 
     /**
      * @param string $column
-     * @param Arrayable|array $values
+     * @param array $values
      * @return $this
      */
-    public function whereNotIn(string $column, $values)
+    public function whereNotIn(string $column, array $values): self
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -268,13 +270,13 @@ class ElasticBuilder
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      * @param false $not
      * @return $this
      */
-    public function whereNull($columns, $not = false)
+    public function whereNull(array $columns, bool $not = false): static
     {
-        $type = $not ? 'must_not' : 'must';
+        $type = $not ? BoolQuery::MUST_NOT : BoolQuery::MUST;
         foreach (Arr::wrap($columns) as $column) {
             $this->queryEndpoint->addExistsToBoolQuery($column, $type);
         }
@@ -283,58 +285,58 @@ class ElasticBuilder
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      * @return $this
      */
-    public function whereNotNull($columns)
+    public function whereNotNull(array $columns): static
     {
         return $this->whereNull($columns, true);
     }
 
     /**
      * @param string $column
-     * @param array $values
+     * @param int|float $min
+     * @param int|float $max
      * @param string $type
      * @return $this
      */
-    public function whereBetween(string $column, array $values, $type = 'must')
+    public function whereBetween(string $column, int|float $min, int|float $max, string $type = 'must'): static
     {
-        $values = array_slice($values, 0, 2);
-        if (count($values) == 2) {
-            $this->queryEndpoint->addBetweenToBoolQuery($column, $values, $type);
-        }
+        $this->queryEndpoint->addBetweenToBoolQuery($column, $min, $max, $type);
 
         return $this;
     }
 
     /**
-     * @param $column
-     * @param array $values
+     * @param string $column
+     * @param int|float $min
+     * @param int|float $max
      * @return $this
      */
-    public function orWhereBetween($column, array $values)
+    public function shouldBetween(string $column, int|float $min, int|float $max): static
     {
-        return $this->whereBetween($column, $values, BoolQuery::SHOULD);
+        return $this->whereBetween($column, $min, $max, BoolQuery::SHOULD);
     }
 
     /**
      * @param string $column
-     * @param array $values
+     * @param int|float $min
+     * @param int|float $max
      * @return $this
      */
-    public function whereNotBetween(string $column, array $values)
+    public function whereNotBetween(string $column, int|float $min, int|float $max): static
     {
-        return $this->whereBetween($column, $values, BoolQuery::MUST_NOT);
+        return $this->whereBetween($column, $min, $max, BoolQuery::MUST_NOT);
     }
 
     /**
      * TODO 优化逻辑，有点绕
      *
      * @param string $relation
-     * @param Closure $callback
+     * @param callable $callback
      * @return $this
      */
-    public function whereHas(string $relation, Closure $callback)
+    public function whereHas(string $relation, callable $callback): self
     {
         $query = $this->newQuery();
         $query->setRelation($relation);
@@ -352,7 +354,7 @@ class ElasticBuilder
     /**
      * @return $this
      */
-    public function newQuery()
+    public function newQuery(): static
     {
         return new static();
     }
@@ -360,11 +362,11 @@ class ElasticBuilder
     /**
      * Add a nested where statement to the query.
      *
-     * @param Closure $callback
+     * @param callable $callback
      * @param string $type
      * @return $this
      */
-    public function whereBoolean(Closure $callback, $type = 'must')
+    public function whereBoolean(callable $callback, string $type = 'must'): static
     {
         call_user_func($callback, $query = $this->newQuery());
 
@@ -376,7 +378,7 @@ class ElasticBuilder
      * @param string $type
      * @return $this
      */
-    public function addBooleanWhereQuery(ElasticBuilder $query, $type = 'must')
+    public function addBooleanWhereQuery(ElasticBuilder $query, string $type = 'must'): static
     {
         if ($bQuery = $query->getBoolQuery()) {
             $this->queryEndpoint->addToBoolQuery($bQuery, $type);
@@ -390,7 +392,7 @@ class ElasticBuilder
      *
      * @return BoolQuery
      */
-    public function getBoolQuery()
+    public function getBoolQuery(): BoolQuery
     {
         return $this->queryEndpoint->getBoolQuery();
     }
@@ -398,7 +400,7 @@ class ElasticBuilder
     /**
      * @return array
      */
-    public function getBoolQueryWheres()
+    public function getBoolQueryWheres(): array
     {
         return $this->queryEndpoint->getBoolQuery()->wheres;
     }
@@ -408,7 +410,7 @@ class ElasticBuilder
      * @param string $type
      * @return $this
      */
-    public function addToBoolQuery(QueryInterface $query, $type = 'must')
+    public function addToBoolQuery(QueryInterface $query, string $type = 'must'): static
     {
         $this->queryEndpoint->addToBoolQuery($query, $type);
 
@@ -416,12 +418,12 @@ class ElasticBuilder
     }
 
     /**
-     * @param SortInterface|string $column
+     * @param string|SortInterface $column
      * @param string $direction
      * @return $this
      * @throws ElasticException
      */
-    public function orderBy($column, $direction = 'asc')
+    public function orderBy(SortInterface|string $column, string $direction = 'asc'): static
     {
         if ($column instanceof SortInterface) {
             $this->sortEndpoint->addContainer($column);
@@ -441,7 +443,7 @@ class ElasticBuilder
      * @return $this
      * @throws ElasticException
      */
-    public function orderByDesc(string $column)
+    public function orderByDesc(string $column): static
     {
         return $this->orderBy($column, 'desc');
     }
@@ -451,7 +453,7 @@ class ElasticBuilder
      * @param array $params
      * @return $this
      */
-    public function highlight(string $column, array $params = [])
+    public function highlight(string $column, array $params = []): static
     {
         $this->highlightEndpoint->addField($column, $params);
 
@@ -459,11 +461,11 @@ class ElasticBuilder
     }
 
     /**
-     * @param AggregationInterface|string $column
+     * @param string|AggregationInterface $column
      * @param string $type
      * @return $this
      */
-    public function aggregation($column, string $type)
+    public function aggregation(AggregationInterface|string $column, string $type): static
     {
         if ($column instanceof AggregationInterface) {
             $this->aggregationEndpoint->addContainer($column);
@@ -479,7 +481,7 @@ class ElasticBuilder
      * @param array $ranges
      * @return $this
      */
-    public function range(string $column, array $ranges)
+    public function range(string $column, array $ranges): static
     {
         $this->aggregationEndpoint->addRangeBucket($column, $ranges);
 
@@ -491,7 +493,7 @@ class ElasticBuilder
      * @param string $column
      * @return $this
      */
-    public function stats(string $column)
+    public function stats(string $column): static
     {
         return $this->aggregation($column, 'stats');
     }
@@ -500,7 +502,7 @@ class ElasticBuilder
      * @param string $column
      * @return $this
      */
-    public function sum(string $column)
+    public function sum(string $column): static
     {
         return $this->aggregation($column, 'sum');
     }
@@ -509,7 +511,7 @@ class ElasticBuilder
      * @param string $column
      * @return $this
      */
-    public function min(string $column)
+    public function min(string $column): static
     {
         return $this->aggregation($column, 'min');
     }
@@ -518,7 +520,7 @@ class ElasticBuilder
      * @param string $column
      * @return $this
      */
-    public function max(string $column)
+    public function max(string $column): static
     {
         return $this->aggregation($column, 'max');
     }
@@ -527,7 +529,7 @@ class ElasticBuilder
      * @param string $column
      * @return $this
      */
-    public function avg(string $column)
+    public function avg(string $column): static
     {
         return $this->aggregation($column, 'avg');
     }
@@ -536,7 +538,7 @@ class ElasticBuilder
      * @param array $options
      * @return Hydrate\ElasticEntity
      */
-    public function get(array $options = [])
+    public function get(array $options = []): ElasticEntity
     {
         return $this->newElasticEngine()->search($options);
     }
@@ -545,27 +547,27 @@ class ElasticBuilder
      * @param array $options
      * @return Hydrate\ElasticEntity
      */
-    public function first(array $options = [])
+    public function first(array $options = []): ElasticEntity
     {
         return $this->limit(1)->get($options);
     }
 
     /**
      * @param Collection $models
-     * @return void
+     * @return bool
      */
-    public function update(Collection $models)
+    public function update(Collection $models): bool
     {
-        $this->newElasticEngine()->update($models);
+        return $this->newElasticEngine()->update($models);
     }
 
     /**
      * @param Collection $models
-     * @return void
+     * @return bool
      */
-    public function delete(Collection $models)
+    public function delete(Collection $models): bool
     {
-        $this->newElasticEngine()->delete($models);
+        return $this->newElasticEngine()->delete($models);
     }
 
     /**
@@ -584,11 +586,13 @@ class ElasticBuilder
     /**
      * @return array
      */
-    public function toSearchParams()
+    public function toSearchParams(): array
     {
         $result = [];
         foreach ($this->params as $field => $param) {
-            $result[$param] = $this->{$field} ?? null;
+            if ($value = $this->{$field}) {
+                $result[$param] = $value;
+            }
         }
         /** @var EndpointInterface[] $endpoints */
         $endpoints = [
@@ -603,31 +607,23 @@ class ElasticBuilder
             }
         }
 
-        return array_filter($result);
-    }
-
-    /**
-     * @return void
-     */
-    public function dd()
-    {
-        dd($this->toSearchParams());
+        return $result;
     }
 
     /**
      * Prepare the value and operator for a where clause.
      *
-     * @param mixed $value
-     * @param mixed $operator
+     * @param mixed|null $value
+     * @param mixed|null $operator
      * @param bool $useDefault
      * @return array
      * @throws ElasticException
      */
-    public function prepareValueAndOperator($value = null, $operator = null, $useDefault = false)
+    public function prepareValueAndOperator(mixed $value = null, mixed $operator = null, bool $useDefault = false): array
     {
         if ($useDefault) {
             return [$operator, '='];
-        } elseif ($this->invalidOperatorAndValue($operator, $value)) {
+        } elseif ($this->isInvalidOperatorAndValue($operator, $value)) {
             throw new ElasticException('Illegal operator and value combination.');
         }
 
@@ -638,7 +634,7 @@ class ElasticBuilder
      * @param int $offset
      * @return $this
      */
-    public function offset(int $offset)
+    public function offset(int $offset): static
     {
         $this->offset = $offset;
 
@@ -649,7 +645,7 @@ class ElasticBuilder
      * @param int $limit
      * @return $this
      */
-    public function limit(int $limit)
+    public function limit(int $limit): static
     {
         $this->limit = $limit;
 
@@ -657,12 +653,14 @@ class ElasticBuilder
     }
 
     /**
-     * @param string|null $relation
-     * @return void
+     * @param string $relation
+     * @return $this
      */
-    public function setRelation(string $relation = null)
+    public function setRelation(string $relation): static
     {
         $this->queryEndpoint->setRelation($relation);
+
+        return $this;
     }
 
     /**
@@ -672,7 +670,7 @@ class ElasticBuilder
      * @param string $occur
      * @return $this
      */
-    protected function addArrayOfWheres(array $column, string $occur)
+    protected function addArrayOfWheres(array $column, string $occur): static
     {
         $this->whereBoolean(function (ElasticBuilder $query) use ($column, $occur) {
             foreach ($column as $key => $value) {
@@ -688,11 +686,11 @@ class ElasticBuilder
     }
 
     /**
-     * @param $operator
-     * @param $value
+     * @param string $operator
+     * @param mixed $value
      * @return bool
      */
-    protected function invalidOperatorAndValue($operator, $value)
+    protected function isInvalidOperatorAndValue(string $operator, mixed $value): bool
     {
         return is_null($value) && in_array($operator, $this->operators);
     }
@@ -703,7 +701,7 @@ class ElasticBuilder
      * @param string $operator
      * @return bool
      */
-    protected function invalidOperator(string $operator)
+    protected function isInvalidOperator(string $operator): bool
     {
         return !in_array(strtolower($operator), $this->operators, true);
     }

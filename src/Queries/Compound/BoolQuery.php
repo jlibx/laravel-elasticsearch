@@ -5,7 +5,6 @@ namespace Golly\Elastic\Queries\Compound;
 
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Queries\Query;
-use stdClass;
 
 /**
  * Class BoolQuery
@@ -13,15 +12,15 @@ use stdClass;
  */
 class BoolQuery extends Query
 {
-    const MUST = 'must';  // 与 AND 等价。
-    const MUST_NOT = 'must_not'; // 与 NOT 等价
-    const SHOULD = 'should'; // 与 OR 等价
-    const FILTER = 'filter';
+    public const MUST = 'must';  // 与 AND 等价。
+    public const MUST_NOT = 'must_not'; // 与 NOT 等价
+    public const SHOULD = 'should'; // 与 OR 等价
+    public const FILTER = 'filter';
 
     /**
      * @var array
      */
-    public $wheres = [];
+    public array $wheres = [];
 
 
     /**
@@ -36,15 +35,15 @@ class BoolQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'bool';
     }
 
     /**
-     * @return array|stdClass
+     * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         $output = [];
         foreach ($this->wheres as $type => $queries) {
@@ -53,24 +52,22 @@ class BoolQuery extends Query
                 $output[$type][] = $query->toArray();
             }
         }
-        $output = $this->merge($output);
 
-        if (empty($output)) {
-            $output = new stdClass();
-        }
-
-        return $output;
+        return $this->merge($output);
     }
 
     /**
      * @param QueryInterface $query
-     * @param $type
+     * @param string $type
+     * @return $this
      */
-    public function addQuery(QueryInterface $query, $type)
+    public function addQuery(QueryInterface $query, string $type): self
     {
         if ($type == self::SHOULD) {
             $this->addParam('minimum_should_match', 1);
         }
         $this->wheres[$type][] = $query;
+
+        return $this;
     }
 }

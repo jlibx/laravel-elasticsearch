@@ -14,5 +14,5 @@ class MinAggregation extends StatsAggregation
     /**
      * @var string
      */
-    protected $type = 'min';
+    protected string $type = 'min';
 }

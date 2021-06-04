@@ -13,5 +13,5 @@ class AvgAggregation extends StatsAggregation
     /**
      * @var string
      */
-    protected $type = 'avg';
+    protected string $type = 'avg';
 }

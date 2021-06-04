@@ -16,10 +16,10 @@ class TermQuery extends Query
     /**
      * TermQuery constructor.
      * @param string $field
-     * @param $value
+     * @param mixed $value
      * @param array $params
      */
-    public function __construct(string $field, $value, array $params = [])
+    public function __construct(string $field, mixed $value, array $params = [])
     {
         $this->field = $field;
         $this->value = $value;
@@ -29,7 +29,7 @@ class TermQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'term';
     }
@@ -38,7 +38,7 @@ class TermQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         if (empty($this->params)) {
             $params = $this->value;

@@ -13,7 +13,7 @@ class RangeAggregation extends BucketAggregation
     /**
      * @var string
      */
-    protected $type = 'range';
+    protected string $type = 'range';
 
     /**
      * @var bool

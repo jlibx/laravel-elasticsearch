@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Golly\Elastic\Jobs;
-
 
 use Golly\Elastic\ElasticEngine;
 use Illuminate\Bus\Queueable;
@@ -26,7 +26,7 @@ class MakeSearchable implements ShouldQueue
      *
      * @var Model
      */
-    public $model;
+    public Model $model;
 
     /**
      * Create a new job instance.
@@ -43,7 +43,7 @@ class MakeSearchable implements ShouldQueue
      * @param ElasticEngine $engine
      * @return void
      */
-    public function handle(ElasticEngine $engine)
+    public function handle(ElasticEngine $engine): void
     {
         $engine->update(new Collection($this->model));
     }

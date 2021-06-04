@@ -16,11 +16,11 @@ abstract class MetricAggregation extends Aggregation
     /**
      * @var bool
      */
-    protected $supportNesting = false;
+    protected bool $supportNesting = false;
 
     /**
      * @var string
      */
-    protected $prefix = 'metric';
+    protected string $prefix = 'metric';
 
 }

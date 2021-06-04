@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Compound;
 
@@ -17,7 +17,7 @@ class ConstantScoreQuery extends Query
     /**
      * @var QueryInterface
      */
-    protected $query;
+    protected QueryInterface $query;
 
     /**
      * ConstantScoreQuery constructor.
@@ -33,7 +33,7 @@ class ConstantScoreQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'constant_score';
     }
@@ -41,7 +41,7 @@ class ConstantScoreQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return $this->merge([
             'filter' => $this->query->toArray()

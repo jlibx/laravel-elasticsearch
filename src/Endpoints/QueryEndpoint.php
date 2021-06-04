@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Endpoints;
 
@@ -23,12 +23,12 @@ class QueryEndpoint extends Endpoint
     /**
      * @var string|null
      */
-    protected $relation;
+    protected ?string $relation;
 
     /**
      * @var BoolQuery
      */
-    protected $boolQuery;
+    protected BoolQuery $boolQuery;
 
     /**
      * QueryEndpoint constructor.
@@ -42,15 +42,15 @@ class QueryEndpoint extends Endpoint
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'query';
     }
 
     /**
-     * @return array|array[]|null
+     * @return array|null
      */
-    public function normalize()
+    public function normalize(): ?array
     {
         if (!$this->boolQuery) {
             return null;
@@ -60,18 +60,20 @@ class QueryEndpoint extends Endpoint
     }
 
     /**
-     * @param string|null $relation
-     * @return void
+     * @param string $relation
+     * @return $this
      */
-    public function setRelation(string $relation = null)
+    public function setRelation(string $relation): static
     {
         $this->relation = $relation;
+
+        return $this;
     }
 
     /**
      * @return BoolQuery
      */
-    public function getBoolQuery()
+    public function getBoolQuery(): BoolQuery
     {
         return $this->boolQuery;
     }
@@ -79,43 +81,52 @@ class QueryEndpoint extends Endpoint
 
     /**
      * @param BoolQuery $query
-     * @return void
+     * @return $this
      */
-    public function setBoolQuery(BoolQuery $query)
+    public function setBoolQuery(BoolQuery $query): static
     {
         $this->boolQuery = $query;
+
+        return $this;
     }
 
     /**
      * @param QueryInterface $query
      * @param string $boolType
-     * @return void
+     * @return $this
      */
-    public function addToBoolQuery(QueryInterface $query, string $boolType = 'must')
+    public function addToBoolQuery(QueryInterface $query, string $boolType = 'must'): static
     {
         $this->boolQuery->addQuery($query, $boolType);
+
+        return $this;
     }
 
     /**
      * @param string $field
-     * @param $boolType
-     * @return void
+     * @param string $boolType
+     * @return $this
      */
-    public function addExistsToBoolQuery(string $field, $boolType)
+    public function addExistsToBoolQuery(string $field, string $boolType): static
     {
-        $field = $this->prepareRelationField($field);
+        $field = $this->toRelationField($field);
         $this->addToBoolQuery(new ExistsQuery($field), $boolType);
+
+        return $this;
     }
 
     /**
      * @param string $field
      * @param array $values
-     * @param $boolType
+     * @param string $boolType
+     * @return $this
      */
-    public function addTermsToBoolQuery(string $field, array $values, $boolType)
+    public function addTermsToBoolQuery(string $field, array $values, string $boolType): static
     {
-        $field = $this->prepareRelationField($field);
+        $field = $this->toRelationField($field);
         $this->addToBoolQuery(new TermsQuery($field, $values), $boolType);
+
+        return $this;
     }
 
     /**
@@ -123,70 +134,56 @@ class QueryEndpoint extends Endpoint
      * @param string $operator
      * @param mixed $value
      * @param string $boolType
-     * @return void
+     * @return $this
      */
-    public function addOpticalToBoolQuery(string $field, string $operator, $value, string $boolType)
+    public function addOpticalToBoolQuery(string $field, string $operator, mixed $value, string $boolType): static
     {
-        $field = $this->prepareRelationField($field);
+        $field = $this->toRelationField($field);
         if ($query = $this->toQuery($field, $operator, $value)) {
             $this->addToBoolQuery($query, $boolType);
         }
+
+        return $this;
     }
 
     /**
      * @param string $field
-     * @param array $value
-     * @param $boolType
-     * @return void
+     * @param int|float $min
+     * @param int|float $max
+     * @param string $boolType
+     * @return $this
      */
-    public function addBetweenToBoolQuery(string $field, array $value, $boolType)
+    public function addBetweenToBoolQuery(string $field, int|float $min, int|float $max, string $boolType): static
     {
-        sort($value);
-        $field = $this->prepareRelationField($field);
-        $this->addToBoolQuery(new RangeQuery($field, [
-            RangeQuery::GTE => $value[0],
-            RangeQuery::LTE => $value[1]
-        ]), $boolType);
+        $field = $this->toRelationField($field);
+        $rQuery = (new RangeQuery($field))
+            ->setGteValue($min)
+            ->setLteValue($max);
+        $this->addToBoolQuery($rQuery, $boolType);
+
+        return $this;
     }
 
     /**
      * @param string $field
      * @param string $operator
-     * @param $value
+     * @param mixed $value
      * @return QueryInterface|null
      */
-    protected function toQuery(string $field, string $operator, $value)
+    protected function toQuery(string $field, string $operator, mixed $value): ?QueryInterface
     {
-        $field = $this->prepareRelationField($field);
-        switch ($operator) {
-            case '=':
-            case '!=':
-            case '<>':
-                return new TermQuery($field, $value);
-            case '>':
-                return new RangeQuery($field, [
-                    RangeQuery::GT => $value
-                ]);
-            case '<':
-                return new RangeQuery($field, [
-                    RangeQuery::LT => $value
-                ]);
-            case '>=':
-                return new RangeQuery($field, [
-                    RangeQuery::GTE => $value
-                ]);
-            case '<=':
-                return new RangeQuery($field, [
-                    RangeQuery::LTE => $value
-                ]);
-            case 'match':
-                return new MatchQuery($field, $value);
-            case 'like':
-            case 'wildcard':
-                return new WildcardQuery($field, $value);
-            default:
-                return null;
-        }
+        $field = $this->toRelationField($field);
+
+        return match ($operator) {
+            '=', '!=', '<>' => new TermQuery($field, $value),
+            '>' => (new RangeQuery($field))->setGtValue($value),
+            '>=' => (new RangeQuery($field))->setGteValue($value),
+            '<' => (new RangeQuery($field))->setLtValue($value),
+            '<=' => (new RangeQuery($field))->setLteValue($value),
+            'match' => new MatchQuery($field, $value),
+            'like', 'wildcard' => new WildcardQuery($field, $value),
+            default => null,
+        };
     }
 
 
@@ -194,7 +191,7 @@ class QueryEndpoint extends Endpoint
      * @param string $field
      * @return string
      */
-    protected function prepareRelationField(string $field)
+    protected function toRelationField(string $field): string
     {
         if (!$this->relation || str_starts_with($field, $this->relation . '.')) {
             return $field;

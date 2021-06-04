@@ -16,7 +16,7 @@ class SortEndpoint extends Endpoint
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'sort';
     }
@@ -25,7 +25,7 @@ class SortEndpoint extends Endpoint
      * @param string $field
      * @param string $direction
      */
-    public function addFieldSort(string $field, $direction = 'asc')
+    public function addFieldSort(string $field, string $direction = 'asc')
     {
         $this->addContainer(
             new FieldSort($field, $direction), $field

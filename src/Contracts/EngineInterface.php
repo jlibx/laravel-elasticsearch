@@ -3,9 +3,7 @@
 
 namespace Golly\Elastic\Contracts;
 
-
-use Golly\Elastic\Eloquent\Builder;
-use Golly\Elastic\Entities\ElasticEntity;
+use Golly\Elastic\Hydrate\ElasticEntity;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -19,17 +17,17 @@ interface EngineInterface
      * Update the given model in the index.
      *
      * @param Collection $models
-     * @return void
+     * @return bool
      */
-    public function update(Collection $models);
+    public function update(Collection $models): bool;
 
     /**
      * Remove the given model from the index.
      *
      * @param Collection $models
-     * @return void
+     * @return bool
      */
-    public function delete(Collection $models);
+    public function delete(Collection $models): bool;
 
     /**
      * Perform the given search on the engine.
@@ -37,5 +35,5 @@ interface EngineInterface
      * @param array $options
      * @return ElasticEntity
      */
-    public function search(array $options = []);
+    public function search(array $options = []): ElasticEntity;
 }

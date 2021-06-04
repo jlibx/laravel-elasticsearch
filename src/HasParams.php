@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic;
 
@@ -13,13 +13,13 @@ trait HasParams
     /**
      * @var array
      */
-    protected $params = [];
+    protected array $params = [];
 
     /**
      * @param array $array
      * @return array
      */
-    public function merge(array $array = [])
+    public function merge(array $array = []): array
     {
         return array_merge($this->params, $array);
     }
@@ -34,11 +34,13 @@ trait HasParams
 
     /**
      * @param array $params
-     * @return void
+     * @return $this
      */
-    public function setParams(array $params)
+    public function setParams(array $params): static
     {
         $this->params = $params;
+
+        return $this;
     }
 
 
@@ -47,7 +49,7 @@ trait HasParams
      * @param mixed $value
      * @return $this
      */
-    public function addParam(string $key, $value)
+    public function addParam(string $key, mixed $value): static
     {
         $this->params[$key] = $value;
 

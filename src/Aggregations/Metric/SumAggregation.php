@@ -13,6 +13,6 @@ class SumAggregation extends StatsAggregation
     /**
      * @var string
      */
-    protected $type = 'sum';
+    protected string $type = 'sum';
 
 }

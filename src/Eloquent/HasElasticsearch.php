@@ -22,7 +22,7 @@ trait HasElasticsearch
     /**
      * @var array
      */
-    protected $searchMetadata = [];
+    protected array $searchMetadata = [];
 
     /**
      * Boot the trait.
@@ -34,29 +34,28 @@ trait HasElasticsearch
         static::observe(new ModelObserver());
     }
 
-
     /**
      * @return Builder
      */
-    public static function elastic()
+    public static function elastic(): Builder
     {
-        return (new static())->newElasticQuery();
+        return (new static())->newEloquentElasticBuilder();
     }
 
     /**
      * @return Builder
      */
-    public function newElasticQuery()
+    public function newEloquentElasticBuilder(): Builder
     {
         return (new Builder(
-            $this->newElasticPrimaryQuery()
+            $this->newElasticBuilder()
         ))->setModel($this);
     }
 
     /**
      * @return ElasticBuilder
      */
-    public function newElasticPrimaryQuery()
+    public function newElasticBuilder(): ElasticBuilder
     {
         return new ElasticBuilder();
     }
@@ -64,17 +63,20 @@ trait HasElasticsearch
     /**
      * @return array
      */
-    public function getSearchMetadata()
+    public function getSearchMetadata(): array
     {
         return $this->searchMetadata;
     }
 
     /**
      * @param array $metaData
+     * @return $this
      */
-    public function setSearchMetadata(array $metaData)
+    public function setSearchMetadata(array $metaData): static
     {
         $this->searchMetadata = $metaData;
+
+        return $this;
     }
 
     /**
@@ -82,7 +84,7 @@ trait HasElasticsearch
      * @param $data
      * @return $this
      */
-    public function addSearchMetadata(string $key, $data)
+    public function addSearchMetadata(string $key, $data): static
     {
         $this->searchMetadata[$key] = $data;
 
@@ -94,7 +96,7 @@ trait HasElasticsearch
      *
      * @return bool
      */
-    public function useSoftDelete()
+    public function useSoftDelete(): bool
     {
         return in_array(SoftDeletes::class, class_uses_recursive(get_called_class()));
     }
@@ -102,7 +104,7 @@ trait HasElasticsearch
     /**
      * @return void
      */
-    public function pushSoftDeleteMetadata()
+    public function pushSoftDeleteMetadata(): void
     {
         if ($this->useSoftDelete()) {
             /** @var static|SoftDeletes $this */
@@ -113,15 +115,15 @@ trait HasElasticsearch
     /**
      * @return string
      */
-    public function getSoftDeletedColumn()
+    public function getSoftDeletedColumn(): string
     {
         return 'soft_deleted';
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getSoftDeletedValue()
+    public function getSoftDeletedValue(): bool
     {
         return false;
     }
@@ -129,7 +131,7 @@ trait HasElasticsearch
     /**
      * @return bool
      */
-    public function shouldBeSearchable()
+    public function shouldBeSearchable(): bool
     {
         return true;
     }
@@ -139,7 +141,7 @@ trait HasElasticsearch
      *
      * @return string
      */
-    public function getSearchIndex()
+    public function getSearchIndex(): string
     {
         $pieces = [
             config('elastic.prefix'),
@@ -154,7 +156,7 @@ trait HasElasticsearch
      *
      * @return mixed
      */
-    public function getSearchKey()
+    public function getSearchKey(): mixed
     {
         return $this->getKey();
     }
@@ -162,7 +164,7 @@ trait HasElasticsearch
     /**
      * @return array
      */
-    public function getSearchRelations()
+    public function getSearchRelations(): array
     {
         return [];
     }
@@ -172,7 +174,7 @@ trait HasElasticsearch
      *
      * @return array
      */
-    public function toSearchArray()
+    public function toSearchArray(): array
     {
         return $this->toArray();
     }
@@ -183,7 +185,7 @@ trait HasElasticsearch
      *
      * @return void
      */
-    public function beforeSearchable()
+    public function beforeSearchable(): void
     {
         $this->loadMissing($this->getSearchRelations());
     }
@@ -191,7 +193,7 @@ trait HasElasticsearch
     /**
      * @return void
      */
-    public function searchable()
+    public function searchable(): void
     {
         $this->beforeSearchable();
         if (config('elastic.queue')) {
@@ -204,7 +206,7 @@ trait HasElasticsearch
     /**
      * @return void
      */
-    public function unsearchable()
+    public function unsearchable(): void
     {
         if (config('elastic.queue')) {
             MakeUnsearchable::dispatch($this)->onQueue('elastic');
@@ -217,7 +219,7 @@ trait HasElasticsearch
      * @param EloquentBuilder $query
      * @return void
      */
-    public function beforeAllSearchable(EloquentBuilder $query)
+    public function beforeAllSearchable(EloquentBuilder $query): void
     {
         $query->with($this->getSearchRelations());
     }
@@ -228,7 +230,7 @@ trait HasElasticsearch
      * @param int|null $chunk
      * @return void
      */
-    public static function makeAllSearchable(int $chunk = null)
+    public static function makeAllSearchable(int $chunk = null): void
     {
         $self = new static();
         $chunk = $chunk ?? config('elastic.chunk');
@@ -238,7 +240,7 @@ trait HasElasticsearch
         })->when($softDelete, function ($query) {
             $query->withTrashed();
         })->chunkById($chunk, function ($models) use ($self) {
-            $self->newElasticPrimaryQuery()->update($models);
+            $self->newElasticBuilder()->update($models);
         });
     }
 
@@ -246,14 +248,14 @@ trait HasElasticsearch
      * @param int|null $chunk
      * @return void
      */
-    public static function makeAllUnsearchable(int $chunk = null)
+    public static function makeAllUnsearchable(int $chunk = null): void
     {
         $self = new static();
         $chunk = $chunk ?? config('elastic.chunk');
         $self->newQuery()->orderBy(
             $self->getKeyName()
         )->chunkById($chunk, function (Collection $models) use ($self) {
-            $self->newElasticPrimaryQuery()->delete($models);
+            $self->newElasticBuilder()->delete($models);
         });
     }
 }

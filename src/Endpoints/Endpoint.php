@@ -6,7 +6,6 @@ namespace Golly\Elastic\Endpoints;
 
 use Golly\Elastic\Contracts\EndpointInterface;
 use Golly\Elastic\HasParams;
-use Illuminate\Support\Str;
 
 /**
  * Class Endpoint
@@ -19,13 +18,13 @@ abstract class Endpoint implements EndpointInterface
     /**
      * @var array
      */
-    protected $containers = [];
+    protected array $containers = [];
 
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function normalize()
+    public function normalize(): ?array
     {
         $output = [];
         foreach ($this->containers as $container) {

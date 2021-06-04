@@ -18,12 +18,12 @@ class FieldSort implements SortInterface
     /**
      * @var string
      */
-    protected $field;
+    protected string $field;
 
     /**
      * @var string
      */
-    protected $direction;
+    protected string $direction;
 
     /**
      * FieldSort constructor.
@@ -41,20 +41,12 @@ class FieldSort implements SortInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $this->addParam('order', $this->direction);
 
         return [
             $this->field => $this->params,
         ];
-    }
-
-    /**
-     * @return string
-     */
-    public function getField(): string
-    {
-        return $this->field;
     }
 }

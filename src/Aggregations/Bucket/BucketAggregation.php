@@ -15,11 +15,11 @@ abstract class BucketAggregation extends Aggregation
     /**
      * @var bool
      */
-    protected $supportNesting = true;
+    protected bool $supportNesting = true;
 
     /**
      * @var string
      */
-    protected $prefix = 'bucket';
+    protected string $prefix = 'bucket';
 
 }

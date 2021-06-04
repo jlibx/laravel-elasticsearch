@@ -18,12 +18,12 @@ class FunctionScoreQuery extends Query
     /**
      * @var QueryInterface
      */
-    protected $query;
+    protected QueryInterface $query;
 
     /**
      * @var array
      */
-    protected $functions = [];
+    protected array $functions = [];
 
     /**
      * FunctionScoreQuery constructor.
@@ -48,7 +48,7 @@ class FunctionScoreQuery extends Query
         array $params = [],
         array $options = [],
         QueryInterface $query = null
-    )
+    ): static
     {
         $function = [
             'script_score' => [
@@ -77,10 +77,10 @@ class FunctionScoreQuery extends Query
     public function addFieldValueFactorFunction(
         $field,
         $factor,
-        $modifier = 'none',
+        string $modifier = 'none',
         QueryInterface $query = null,
         $missing = null
-    )
+    ): static
     {
         $function = [
             'field_value_factor' => array_filter([
@@ -100,7 +100,7 @@ class FunctionScoreQuery extends Query
      * @param QueryInterface|null $query
      * @return $this
      */
-    public function addWeightFunction($weight, QueryInterface $query = null)
+    public function addWeightFunction($weight, QueryInterface $query = null): static
     {
         $function = [
             'weight' => $weight,
@@ -115,7 +115,7 @@ class FunctionScoreQuery extends Query
      * @param QueryInterface|null $query
      * @return $this
      */
-    public function addRandomFunction($seed = null, QueryInterface $query = null)
+    public function addRandomFunction($seed = null, QueryInterface $query = null): static
     {
         $function = [
             'random_score' => $seed ? ['seed' => $seed] : new stdClass(),
@@ -141,7 +141,7 @@ class FunctionScoreQuery extends Query
         array $options = [],
         QueryInterface $query = null,
         $weight = null
-    )
+    ): static
     {
         $function = array_filter([
             $type => array_merge(
@@ -159,7 +159,7 @@ class FunctionScoreQuery extends Query
      * @param array $function
      * @return $this
      */
-    public function addSimpleFunction(array $function)
+    public function addSimpleFunction(array $function): static
     {
         $this->functions[] = $function;
 
@@ -169,7 +169,7 @@ class FunctionScoreQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'function_score';
     }
@@ -177,7 +177,7 @@ class FunctionScoreQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return $this->merge([
             'query' => $this->query->toArray(),
@@ -188,8 +188,9 @@ class FunctionScoreQuery extends Query
     /**
      * @param array $function
      * @param QueryInterface|null $query
+     * @return void
      */
-    protected function applyToFunctions(array $function, QueryInterface $query = null)
+    protected function applyToFunctions(array $function, QueryInterface $query = null): void
     {
         if ($query) {
             $function['filter'] = $query->toArray();

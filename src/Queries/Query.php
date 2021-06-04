@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries;
 
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\HasParams;
+use stdClass;
 
 /**
  * Class Query
@@ -17,30 +19,30 @@ abstract class Query implements QueryInterface
     /**
      * @var string
      */
-    protected $field;
+    protected string $field;
 
     /**
      * @var mixed
      */
-    protected $value;
+    protected mixed $value;
 
     /**
      * @return string
      */
-    abstract public function getType();
-
-    /**
-     * @return mixed
-     */
-    abstract public function getTypeValue();
+    abstract public function getType(): string;
 
     /**
      * @return array
      */
-    public function toArray()
+    abstract public function getTypeValue(): array;
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
     {
         return [
-            $this->getType() => $this->getTypeValue()
+            $this->getType() => $this->getTypeValue() ?: new stdClass()
         ];
     }
 }

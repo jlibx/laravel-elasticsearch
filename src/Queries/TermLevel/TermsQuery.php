@@ -29,7 +29,7 @@ class TermsQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'terms';
     }
@@ -37,7 +37,7 @@ class TermsQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return $this->merge([
             $this->field => $this->value,

@@ -13,5 +13,5 @@ class MaxAggregation extends StatsAggregation
     /**
      * @var string
      */
-    protected $type = 'max';
+    protected string $type = 'max';
 }

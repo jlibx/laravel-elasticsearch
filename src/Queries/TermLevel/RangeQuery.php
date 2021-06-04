@@ -13,10 +13,10 @@ use Golly\Elastic\Queries\Query;
 class RangeQuery extends Query
 {
 
-    const LT = 'lt';
-    const GT = 'gt';
-    const LTE = 'lte';
-    const GTE = 'gte';
+    public const LT = 'lt';
+    public const GT = 'gt';
+    public const LTE = 'lte';
+    public const GTE = 'gte';
 
     /**
      * RangeQuery constructor.
@@ -33,7 +33,7 @@ class RangeQuery extends Query
      * @param array ranges
      * @return $this
      */
-    public function setRanges(array $ranges)
+    public function setRanges(array $ranges): self
     {
         foreach ($ranges as $key => $value) {
             $this->addParam($key, $value);
@@ -43,9 +43,53 @@ class RangeQuery extends Query
     }
 
     /**
+     * @param int|float $value
+     * @return $this
+     */
+    public function setLtValue(int|float $value): self
+    {
+        $this->setParams([static::LT => $value]);
+
+        return $this;
+    }
+
+    /**
+     * @param int|float $value
+     * @return $this
+     */
+    public function setLteValue(int|float $value): self
+    {
+        $this->setParams([static::LTE => $value]);
+
+        return $this;
+    }
+
+    /**
+     * @param int|float $value
+     * @return $this
+     */
+    public function setGtValue(int|float $value): self
+    {
+        $this->setParams([static::GT => $value]);
+
+        return $this;
+    }
+
+    /**
+     * @param int|float $value
+     * @return $this
+     */
+    public function setGteValue(int|float $value): self
+    {
+        $this->setParams([static::GTE => $value]);
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'range';
     }
@@ -53,10 +97,12 @@ class RangeQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return [
             $this->field => $this->params,
         ];
     }
+
+
 }

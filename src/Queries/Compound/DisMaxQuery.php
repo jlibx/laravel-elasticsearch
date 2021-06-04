@@ -18,7 +18,7 @@ class DisMaxQuery extends Query
     /**
      * @var QueryInterface[]
      */
-    protected $queries;
+    protected array $queries;
 
     /**
      * DisMaxQuery constructor.
@@ -33,7 +33,7 @@ class DisMaxQuery extends Query
      * @param QueryInterface $query
      * @return $this
      */
-    public function addQuery(QueryInterface $query)
+    public function addQuery(QueryInterface $query): self
     {
         $this->queries[] = $query;
 
@@ -43,7 +43,7 @@ class DisMaxQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'dis_max';
     }
@@ -51,7 +51,7 @@ class DisMaxQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         $queries = [];
         foreach ($this->queries as $type) {

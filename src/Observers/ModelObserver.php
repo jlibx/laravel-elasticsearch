@@ -16,11 +16,12 @@ class ModelObserver
     /**
      * Handle the saved event for the model.
      *
-     * @param Model|HasElasticsearch $model
+     * @param Model $model
      * @return void
      */
-    public function saved($model)
+    public function saved(Model $model): void
     {
+        /** @var HasElasticsearch $model */
         if (!$model->shouldBeSearchable()) {
             $model->unsearchable();
 
@@ -36,7 +37,7 @@ class ModelObserver
      * @param Model|HasElasticsearch $model
      * @return void
      */
-    public function deleted($model)
+    public function deleted(Model $model): void
     {
         if ($model->useSoftDelete()) {
             $this->saved($model);
@@ -51,7 +52,7 @@ class ModelObserver
      * @param Model|HasElasticsearch $model
      * @return void
      */
-    public function forceDeleted($model)
+    public function forceDeleted(Model $model): void
     {
         $model->unsearchable();
     }
@@ -62,7 +63,7 @@ class ModelObserver
      * @param Model|HasElasticsearch $model
      * @return void
      */
-    public function restored($model)
+    public function restored(Model $model): void
     {
         $this->saved($model);
     }

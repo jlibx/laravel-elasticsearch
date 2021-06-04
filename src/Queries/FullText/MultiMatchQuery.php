@@ -16,7 +16,7 @@ class MultiMatchQuery extends Query
     /**
      * @var array
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
      * MultiMatchQuery constructor.
@@ -34,7 +34,7 @@ class MultiMatchQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'multi_match';
     }
@@ -42,7 +42,7 @@ class MultiMatchQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         $query = [
             'query' => $this->value,

@@ -12,10 +12,10 @@ interface EndpointInterface
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function normalize();
+    public function normalize(): ?array;
 }

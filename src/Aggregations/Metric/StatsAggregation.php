@@ -14,19 +14,19 @@ class StatsAggregation extends MetricAggregation
      *
      * @var string
      */
-    protected $type = 'stats';
+    protected string $type = 'stats';
 
     /**
      * @return array
      */
-    public function getArray()
+    public function getArray(): array
     {
         $output = [];
         if ($this->field) {
             $output['field'] = $this->field;
         }
-        if ($this->script) {
-            $output['script'] = $this->script;
+        if ($this->scripts) {
+            $output['script'] = $this->scripts;
         }
 
         return $output;

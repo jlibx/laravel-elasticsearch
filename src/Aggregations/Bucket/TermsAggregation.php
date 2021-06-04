@@ -12,7 +12,7 @@ class TermsAggregation extends BucketAggregation
     /**
      * @var string
      */
-    protected $type = 'terms';
+    protected string $type = 'terms';
 
     /**
      * TermsBucket constructor.
@@ -24,7 +24,7 @@ class TermsAggregation extends BucketAggregation
         parent::__construct($field);
 
         $this->field = $field;
-        $this->script = $script;
+        $this->scripts = $script;
     }
 
     /**
@@ -34,7 +34,7 @@ class TermsAggregation extends BucketAggregation
     {
         return array_filter([
             'field' => $this->field,
-            'script' => $this->script,
+            'script' => $this->scripts,
         ]);
     }
 

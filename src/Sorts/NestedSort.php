@@ -19,17 +19,17 @@ class NestedSort implements SortInterface
     /**
      * @var string
      */
-    protected $path;
+    protected string $path;
 
     /**
      * @var QueryInterface|null
      */
-    protected $filter;
+    protected ?QueryInterface $filter;
 
     /**
-     * @var QueryInterface
+     * @var QueryInterface|null
      */
-    protected $nestedFilter;
+    protected ?QueryInterface $nestedFilter;
 
     /**
      * NestedSort constructor.
@@ -47,7 +47,7 @@ class NestedSort implements SortInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $output = [
             'path' => $this->path,

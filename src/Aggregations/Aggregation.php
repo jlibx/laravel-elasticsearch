@@ -18,37 +18,37 @@ abstract class Aggregation implements AggregationInterface
     /**
      * @var array
      */
-    protected $script = [];
+    protected array $scripts = [];
 
     /**
      * @var bool
      */
-    protected $supportNesting = false;
+    protected bool $supportNesting = false;
 
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @var string
      */
-    protected $name = '';
+    protected string $field;
 
     /**
      * @var string
      */
-    protected $prefix = '';
+    protected string $name;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $field = '';
+    protected ?string $prefix;
 
     /**
      * @var AggregationInterface[]
      */
-    protected $aggregations = [];
+    protected array $aggregations = [];
 
     /**
      * AbstractAggregation constructor.
@@ -57,21 +57,21 @@ abstract class Aggregation implements AggregationInterface
     public function __construct(string $field)
     {
         $this->field = $field;
-        $this->setName($field);
+        $this->initName();
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param string $field
+     * @return void
      */
-    public function setName(string $field)
+    public function initName(): void
     {
         $array = [];
         if ($this->prefix) {
@@ -86,12 +86,12 @@ abstract class Aggregation implements AggregationInterface
     }
 
 
-    abstract public function getArray();
+    abstract public function getArray(): array;
 
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $array = $this->getArray();
         $result = [
@@ -112,7 +112,7 @@ abstract class Aggregation implements AggregationInterface
     /**
      * @return array
      */
-    public function collectNestedAggregations()
+    public function collectNestedAggregations(): array
     {
         $result = [];
         foreach ($this->aggregations as $aggregation) {

@@ -23,15 +23,15 @@ class AggregationEndpoint extends Endpoint
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'aggregations';
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function normalize()
+    public function normalize(): ?array
     {
         $output = [];
         /**
@@ -49,7 +49,7 @@ class AggregationEndpoint extends Endpoint
      * @param array $ranges
      * @return $this
      */
-    public function addRangeBucket(string $field, array $ranges)
+    public function addRangeBucket(string $field, array $ranges): static
     {
         $aggregation = new RangeAggregation($field, $ranges);
         $this->addContainer($aggregation, $aggregation->getName());
@@ -62,7 +62,7 @@ class AggregationEndpoint extends Endpoint
      * @param array $script
      * @return $this
      */
-    public function addTermsBucket(string $field, array $script = [])
+    public function addTermsBucket(string $field, array $script = []): static
     {
         $aggregation = new TermsAggregation($field, $script);
         $this->addContainer($aggregation, $aggregation->getName());
@@ -71,30 +71,20 @@ class AggregationEndpoint extends Endpoint
     }
 
     /**
-     * @param $field
-     * @param $type
+     * @param string $field
+     * @param string $type
      * @return $this
      */
-    public function addAggregation($field, $type)
+    public function addAggregation(string $field, string $type): static
     {
-        $aggregation = null;
-        switch ($type) {
-            case 'stats':
-                $aggregation = new StatsAggregation($field);
-                break;
-            case 'sum':
-                $aggregation = new SumAggregation($field);
-                break;
-            case 'min':
-                $aggregation = new MinAggregation($field);
-                break;
-            case 'max':
-                $aggregation = new MaxAggregation($field);
-                break;
-            case 'avg':
-                $aggregation = new AvgAggregation($field);
-                break;
-        }
+        $aggregation = match ($type) {
+            'stats' => new StatsAggregation($field),
+            'sum' => new SumAggregation($field),
+            'min' => new MinAggregation($field),
+            'max' => new MaxAggregation($field),
+            'avg' => new AvgAggregation($field),
+            default => null,
+        };
         if ($aggregation) {
             $this->addContainer($aggregation, $aggregation->getName());
         }

@@ -16,17 +16,17 @@ class BoostingQuery extends Query
     /**
      * @var QueryInterface
      */
-    protected $positive;
+    protected QueryInterface $positive;
 
     /**
      * @var QueryInterface
      */
-    protected $negative;
+    protected QueryInterface $negative;
 
     /**
      * @var int|float
      */
-    protected $negativeBoost;
+    protected int|float $negativeBoost;
 
     /**
      * BoostingQuery constructor.
@@ -48,7 +48,7 @@ class BoostingQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'boosting';
     }
@@ -56,7 +56,7 @@ class BoostingQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return [
             'positive' => $this->positive->toArray(),
