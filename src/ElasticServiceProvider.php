@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic;
-
 
 use Golly\Elastic\Console\ImportModel;
 use Golly\Elastic\Console\RemoveModel;

@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Joining;
-
 
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Queries\Query;
@@ -16,12 +15,12 @@ class NestedQuery extends Query
     /**
      * @var string
      */
-    protected $path;
+    protected string $path;
 
     /**
      * @var QueryInterface
      */
-    protected $query;
+    protected QueryInterface $query;
 
     /**
      * NestedQuery constructor.
@@ -39,7 +38,7 @@ class NestedQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'nested';
     }
@@ -47,7 +46,7 @@ class NestedQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return $this->merge([
             'path' => $this->path,

@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Hydrate\Annotations;
 
@@ -14,20 +14,20 @@ final class Mapping
     /**
      * @var string
      */
-    public $type;
+    public string $type;
 
     /**
      * analyzer of attribute
      *
      * @var string
      */
-    public $analyzer;
+    public string $analyzer;
 
     /**
      * format of date
      *
      * @var string
      */
-    public $format;
+    public string $format;
 
 }

@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Console;
 
@@ -32,14 +32,16 @@ class ImportModel extends Command
     /**
      * Execute the console command.
      *
-     * @return void
+     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         /** @var HasElasticsearch $class */
         $class = $this->argument('model');
         $class::makeAllSearchable($this->option('chunk'));
 
         $this->info('All [' . $class . '] records have been imported.');
+
+        return 0;
     }
 }

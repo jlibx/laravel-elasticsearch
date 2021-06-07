@@ -1,10 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries;
-
-
-use stdClass;
 
 /**
  * Class MatchAllQuery
@@ -25,17 +22,17 @@ class MatchAllQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'match_all';
     }
 
     /**
-     * @return array|stdClass
+     * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
-        return $this->params ?: new stdClass();
+        return $this->params;
     }
 
 }

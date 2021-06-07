@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Aggregations\Bucket;
 
@@ -30,7 +30,7 @@ class TermsAggregation extends BucketAggregation
     /**
      * @return array
      */
-    public function getArray()
+    public function getArray(): array
     {
         return array_filter([
             'field' => $this->field,

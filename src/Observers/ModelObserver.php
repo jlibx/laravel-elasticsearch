@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Observers;
-
 
 use Golly\Elastic\Eloquent\HasElasticsearch;
 use Illuminate\Database\Eloquent\Model;
@@ -16,12 +15,11 @@ class ModelObserver
     /**
      * Handle the saved event for the model.
      *
-     * @param Model $model
+     * @param Model|HasElasticsearch $model
      * @return void
      */
     public function saved(Model $model): void
     {
-        /** @var HasElasticsearch $model */
         if (!$model->shouldBeSearchable()) {
             $model->unsearchable();
 

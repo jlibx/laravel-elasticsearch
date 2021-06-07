@@ -29,9 +29,9 @@ class AggregationEndpoint extends Endpoint
     }
 
     /**
-     * @return array|null
+     * @return array
      */
-    public function normalize(): ?array
+    public function normalize(): array
     {
         $output = [];
         /**

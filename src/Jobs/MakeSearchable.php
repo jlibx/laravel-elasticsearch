@@ -1,10 +1,9 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Golly\Elastic\Jobs;
 
-use Golly\Elastic\ElasticEngine;
+use Golly\Elastic\Engine;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
@@ -40,10 +39,10 @@ class MakeSearchable implements ShouldQueue
     }
 
     /**
-     * @param ElasticEngine $engine
+     * @param Engine $engine
      * @return void
      */
-    public function handle(ElasticEngine $engine): void
+    public function handle(Engine $engine): void
     {
         $engine->update(new Collection($this->model));
     }

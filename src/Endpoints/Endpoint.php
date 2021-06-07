@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Endpoints;
-
 
 use Golly\Elastic\Contracts\EndpointInterface;
 use Golly\Elastic\HasParams;
@@ -22,9 +21,9 @@ abstract class Endpoint implements EndpointInterface
 
 
     /**
-     * @return array|null
+     * @return array
      */
-    public function normalize(): ?array
+    public function normalize(): array
     {
         $output = [];
         foreach ($this->containers as $container) {
@@ -46,7 +45,7 @@ abstract class Endpoint implements EndpointInterface
      * @param array $containers
      * @return void
      */
-    public function setContainers(array $containers)
+    public function setContainers(array $containers): void
     {
         $this->containers = $containers;
     }
@@ -56,7 +55,7 @@ abstract class Endpoint implements EndpointInterface
      * @param string|null $key
      * @return void
      */
-    public function addContainer($container, string $key = null)
+    public function addContainer($container, string $key = null): void
     {
         if ($key) {
             $this->containers[$key] = $container;

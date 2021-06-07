@@ -18,12 +18,12 @@ class RangeAggregation extends BucketAggregation
     /**
      * @var bool
      */
-    protected $keyed = false;
+    protected bool $keyed = false;
 
     /**
      * @var array
      */
-    protected $ranges = [];
+    protected array $ranges = [];
 
     /**
      * RangeBucket constructor.
@@ -31,7 +31,7 @@ class RangeAggregation extends BucketAggregation
      * @param array $ranges
      * @param false $keyed
      */
-    public function __construct(string $field, array $ranges = [], $keyed = false)
+    public function __construct(string $field, array $ranges = [], bool $keyed = false)
     {
         parent::__construct($field);
 
@@ -42,7 +42,7 @@ class RangeAggregation extends BucketAggregation
     /**
      * @return array
      */
-    public function getArray()
+    public function getArray(): array
     {
         $data = [
             'keyed' => $this->keyed,
@@ -59,8 +59,9 @@ class RangeAggregation extends BucketAggregation
 
     /**
      * @param array $ranges
+     * @return void
      */
-    public function handleRange(array $ranges)
+    public function handleRange(array $ranges): void
     {
         foreach ($ranges as $range) {
             if (!is_array($range)) {
@@ -75,12 +76,12 @@ class RangeAggregation extends BucketAggregation
 
 
     /**
-     * @param null $from
-     * @param null $to
-     * @param string $key
+     * @param mixed $from
+     * @param mixed $to
+     * @param mixed $key
      * @return $this
      */
-    public function addRange($from = null, $to = null, $key = null)
+    public function addRange(mixed $from = null, mixed $to = null, mixed $key = null): self
     {
         $range = array_filter([
             'from' => $from,

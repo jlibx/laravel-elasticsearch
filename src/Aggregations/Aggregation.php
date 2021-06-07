@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Aggregations;
-
 
 use Golly\Elastic\Contracts\AggregationInterface;
 use Golly\Elastic\HasParams;
@@ -41,9 +40,9 @@ abstract class Aggregation implements AggregationInterface
     protected string $name;
 
     /**
-     * @var string|null
+     * @var string
      */
-    protected ?string $prefix;
+    protected string $prefix = '';
 
     /**
      * @var AggregationInterface[]

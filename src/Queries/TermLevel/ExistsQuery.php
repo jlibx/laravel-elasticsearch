@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\TermLevel;
-
 
 use Golly\Elastic\Queries\Query;
 
@@ -25,15 +24,15 @@ class ExistsQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'exists';
     }
 
     /**
-     * @return mixed|string
+     * @return mixed
      */
-    public function getTypeValue()
+    public function getTypeValue(): mixed
     {
         return $this->field;
     }

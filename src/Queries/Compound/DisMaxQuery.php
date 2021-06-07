@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Compound;
-
 
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Queries\Query;
@@ -57,8 +56,7 @@ class DisMaxQuery extends Query
         foreach ($this->queries as $type) {
             $queries[] = $type->toArray();
         }
-        return $this->merge([
-            'queries' => $queries
-        ]);
+
+        return $this->merge(['queries' => $queries]);
     }
 }

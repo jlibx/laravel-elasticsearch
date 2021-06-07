@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\TermLevel;
 
@@ -30,7 +30,7 @@ class RegexpQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'regexp';
     }
@@ -38,7 +38,7 @@ class RegexpQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return [
             $this->field => $this->merge([

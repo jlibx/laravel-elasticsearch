@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Joining;
 
@@ -16,12 +16,12 @@ class ParentIdQuery extends Query
     /**
      * @var string
      */
-    protected $id;
+    protected string $id;
 
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
 
     /**
@@ -39,7 +39,7 @@ class ParentIdQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'parent_id';
     }
@@ -47,7 +47,7 @@ class ParentIdQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return $this->merge([
             'id' => $this->id,

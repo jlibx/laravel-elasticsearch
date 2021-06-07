@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Golly\Elastic\Queries;
@@ -25,16 +24,6 @@ abstract class Query implements QueryInterface
      * @var mixed
      */
     protected mixed $value;
-
-    /**
-     * @return string
-     */
-    abstract public function getType(): string;
-
-    /**
-     * @return array
-     */
-    abstract public function getTypeValue(): array;
 
     /**
      * @return array

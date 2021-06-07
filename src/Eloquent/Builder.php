@@ -1,11 +1,10 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Golly\Elastic\Eloquent;
 
 use Closure;
-use Golly\Elastic\ElasticBuilder;
+use Golly\Elastic\Builder as EsBuilder;
 use Golly\Elastic\Hydrate\ElasticEntity;
 use Golly\Elastic\Exceptions\ElasticException;
 use Golly\Elastic\Queries\Compound\BoolQuery;
@@ -19,16 +18,16 @@ use Illuminate\Support\Traits\ForwardsCalls;
 /**
  * Class Builder
  * @package Golly\Elastic\Eloquent
- * @mixin ElasticBuilder
+ * @mixin Builder
  */
 class Builder
 {
     use ForwardsCalls;
 
     /**
-     * @var ElasticBuilder
+     * @var EsBuilder
      */
-    protected ElasticBuilder $esBuilder;
+    protected EsBuilder $esBuilder;
 
     /**
      * @var Model|HasElasticsearch
@@ -54,9 +53,9 @@ class Builder
 
     /**
      * Builder constructor.
-     * @param ElasticBuilder $esBuilder
+     * @param EsBuilder $esBuilder
      */
-    public function __construct(ElasticBuilder $esBuilder)
+    public function __construct(EsBuilder $esBuilder)
     {
         $this->esBuilder = $esBuilder;
     }
@@ -95,9 +94,9 @@ class Builder
     public function where($column, $operator = null, $value = null, string $type = 'must'): self
     {
         if ($column instanceof Closure && is_null($operator)) {
-            $column($query = $this->model->newEloquentElasticBuilder());
+            $column($query = $this->model->newEloquentEsBuilder());
 
-            $this->esBuilder->addBooleanWhereQuery($query->getEsBuilder(), $type);
+            $this->esBuilder->addToBoolWhereQuery($query->getEsBuilder(), $type);
         } else {
             $this->esBuilder->where(...func_get_args());
         }
@@ -112,9 +111,9 @@ class Builder
      */
     public function whereBool(callable $callback, string $type = 'must'): self
     {
-        $callback($query = $this->model->newEloquentElasticBuilder());
+        $callback($query = $this->model->newEloquentEsBuilder());
 
-        $this->esBuilder->addBooleanWhereQuery($query->getEsBuilder(), $type);
+        $this->esBuilder->addToBoolWhereQuery($query->getEsBuilder(), $type);
 
         return $this;
     }
@@ -198,7 +197,7 @@ class Builder
      */
     public function whereHas(string $relation, Closure $callback)
     {
-        $builder = $this->model->newEloquentElasticBuilder();
+        $builder = $this->model->newEloquentEsBuilder();
         $builder->setRelation($relation);
         $callback($builder);
         $tWheres = $builder->getEsBuilder()->getBoolQueryWheres();
@@ -337,9 +336,9 @@ class Builder
     }
 
     /**
-     * @return ElasticBuilder
+     * @return Builder
      */
-    public function getEsBuilder(): ElasticBuilder
+    public function getEsBuilder(): Builder
     {
         return $this->esBuilder;
     }

@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Compound;
-
 
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Queries\Query;
@@ -48,7 +47,7 @@ class FunctionScoreQuery extends Query
         array $params = [],
         array $options = [],
         QueryInterface $query = null
-    ): static
+    ): self
     {
         $function = [
             'script_score' => [
@@ -80,7 +79,7 @@ class FunctionScoreQuery extends Query
         string $modifier = 'none',
         QueryInterface $query = null,
         $missing = null
-    ): static
+    ): self
     {
         $function = [
             'field_value_factor' => array_filter([
@@ -100,7 +99,7 @@ class FunctionScoreQuery extends Query
      * @param QueryInterface|null $query
      * @return $this
      */
-    public function addWeightFunction($weight, QueryInterface $query = null): static
+    public function addWeightFunction($weight, QueryInterface $query = null): self
     {
         $function = [
             'weight' => $weight,
@@ -115,7 +114,7 @@ class FunctionScoreQuery extends Query
      * @param QueryInterface|null $query
      * @return $this
      */
-    public function addRandomFunction($seed = null, QueryInterface $query = null): static
+    public function addRandomFunction($seed = null, QueryInterface $query = null): self
     {
         $function = [
             'random_score' => $seed ? ['seed' => $seed] : new stdClass(),
@@ -141,7 +140,7 @@ class FunctionScoreQuery extends Query
         array $options = [],
         QueryInterface $query = null,
         $weight = null
-    ): static
+    ): self
     {
         $function = array_filter([
             $type => array_merge(
@@ -159,7 +158,7 @@ class FunctionScoreQuery extends Query
      * @param array $function
      * @return $this
      */
-    public function addSimpleFunction(array $function): static
+    public function addSimpleFunction(array $function): self
     {
         $this->functions[] = $function;
 

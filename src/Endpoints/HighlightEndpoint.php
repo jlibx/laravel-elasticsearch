@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Endpoints;
 
@@ -15,17 +15,17 @@ class HighlightEndpoint extends Endpoint
     /**
      * @var array
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
      * @var array
      */
-    protected $tags = [];
+    protected array $tags = [];
 
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'highlight';
     }
@@ -33,7 +33,7 @@ class HighlightEndpoint extends Endpoint
     /**
      * @return array
      */
-    public function normalize()
+    public function normalize(): array
     {
         $output = [];
         if (is_array($this->tags)) {
@@ -53,7 +53,7 @@ class HighlightEndpoint extends Endpoint
      *
      * @return $this
      */
-    public function addField(string $name, array $params = [])
+    public function addField(string $name, array $params = []): self
     {
         $this->fields[$name] = $params;
 

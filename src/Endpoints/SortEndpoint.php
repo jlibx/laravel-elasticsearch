@@ -24,8 +24,9 @@ class SortEndpoint extends Endpoint
     /**
      * @param string $field
      * @param string $direction
+     * @return void
      */
-    public function addFieldSort(string $field, string $direction = 'asc')
+    public function addFieldSort(string $field, string $direction = 'asc'): void
     {
         $this->addContainer(
             new FieldSort($field, $direction), $field

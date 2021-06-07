@@ -27,7 +27,7 @@ class IdsQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'ids';
     }
@@ -35,7 +35,7 @@ class IdsQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return $this->merge([
             'values' => $this->value,

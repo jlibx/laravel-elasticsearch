@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\FullText;
-
 
 use Golly\Elastic\Queries\Query;
 
@@ -28,7 +27,7 @@ class SimpleQueryStringQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'simple_query_string';
     }
@@ -36,7 +35,7 @@ class SimpleQueryStringQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return $this->merge([
             'query' => $this->value

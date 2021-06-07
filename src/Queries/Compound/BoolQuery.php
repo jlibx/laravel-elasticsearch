@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Compound;
 
@@ -47,7 +47,6 @@ class BoolQuery extends Query
     {
         $output = [];
         foreach ($this->wheres as $type => $queries) {
-            /** @var QueryInterface $query */
             foreach ($queries as $query) {
                 $output[$type][] = $query->toArray();
             }

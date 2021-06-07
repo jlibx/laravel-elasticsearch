@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Specialized;
-
 
 use Golly\Elastic\Queries\Query;
 
@@ -16,7 +15,7 @@ class ScriptQuery extends Query
     /**
      * @var string
      */
-    protected $script;
+    protected string $script;
 
     /**
      * @param string $script
@@ -31,7 +30,7 @@ class ScriptQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'script';
     }
@@ -39,7 +38,7 @@ class ScriptQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return [
             'script' => $this->merge([

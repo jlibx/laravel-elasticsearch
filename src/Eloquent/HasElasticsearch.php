@@ -3,7 +3,7 @@
 
 namespace Golly\Elastic\Eloquent;
 
-use Golly\Elastic\ElasticBuilder;
+use Golly\Elastic\Builder as EsBuilder;
 use Golly\Elastic\Jobs\MakeSearchable;
 use Golly\Elastic\Jobs\MakeUnsearchable;
 use Golly\Elastic\Observers\ModelObserver;
@@ -39,25 +39,25 @@ trait HasElasticsearch
      */
     public static function elastic(): Builder
     {
-        return (new static())->newEloquentElasticBuilder();
+        return (new static())->newEloquentEsBuilder();
     }
 
     /**
      * @return Builder
      */
-    public function newEloquentElasticBuilder(): Builder
+    public function newEloquentEsBuilder(): Builder
     {
         return (new Builder(
-            $this->newElasticBuilder()
+            $this->newEsBuilder()
         ))->setModel($this);
     }
 
     /**
-     * @return ElasticBuilder
+     * @return EsBuilder
      */
-    public function newElasticBuilder(): ElasticBuilder
+    public function newEsBuilder(): EsBuilder
     {
-        return new ElasticBuilder();
+        return new EsBuilder();
     }
 
     /**
@@ -104,7 +104,7 @@ trait HasElasticsearch
     /**
      * @return void
      */
-    public function pushSoftDeleteMetadata(): void
+    public function prepareSoftDeletedMetadata(): void
     {
         if ($this->useSoftDelete()) {
             /** @var static|SoftDeletes $this */
@@ -240,7 +240,7 @@ trait HasElasticsearch
         })->when($softDelete, function ($query) {
             $query->withTrashed();
         })->chunkById($chunk, function ($models) use ($self) {
-            $self->newElasticBuilder()->update($models);
+            $self->newEsBuilder()->update($models);
         });
     }
 
@@ -255,7 +255,7 @@ trait HasElasticsearch
         $self->newQuery()->orderBy(
             $self->getKeyName()
         )->chunkById($chunk, function (Collection $models) use ($self) {
-            $self->newElasticBuilder()->delete($models);
+            $self->newEsBuilder()->delete($models);
         });
     }
 }

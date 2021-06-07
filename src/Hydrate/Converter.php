@@ -31,40 +31,31 @@ class Converter
     const TYPE_MONEY = 'money';
     const TYPE_JSON = 'json';
 
+    public const IK_SMART = 'ik_smart';
+
     /**
      * @var string[]
      */
-    protected static $analyzers = ['ik_smart', 'ik_max_word'];
+    protected static array $analyzers = [
+        'ik_smart',
+        'ik_max_word'
+    ];
 
     /**
-     * @param string $type
+     * @param string|null $type
      * @return string
      */
-    public static function toElasticType(string $type): string
+    public static function toElasticType(?string $type): string
     {
-        switch ($type) {
-            case 'int':
-            case 'integer':
-            case 'timestamp':
-                return 'integer';
-            case 'real':
-            case 'float':
-            case 'double':
-                return 'float';
-            case 'string':
-                return 'keyword';
-            case 'bool':
-            case 'boolean':
-                return 'boolean';
-            case 'year':
-            case 'date':
-            case 'datetime':
-                return 'date';
-            case 'object':
-                return 'object';
-            default:
-                return $type;
-        }
+        return match ($type) {
+            'int', 'integer', 'timestamp' => 'integer',
+            'real', 'float', 'double' => 'float',
+            'string' => 'keyword',
+            'bool', 'boolean' => 'boolean',
+            'year', 'date', 'datetime' => 'date',
+            'object' => 'object',
+            default => 'text',
+        };
     }
 
     /**
@@ -73,16 +64,12 @@ class Converter
      */
     public static function toElasticFormat(?string $format): ?string
     {
-        switch ($format) {
-            case 'Y':
-                return 'yyyy';
-            case 'Y-m-d':
-                return 'yyyy-MM-dd';
-            case 'Y-m-d H:i:s':
-                return 'yyyy-MM-dd HH:mm:ss';
-            default:
-                return $format;
-        }
+        return match ($format) {
+            'Y' => 'yyyy',
+            'Y-m-d' => 'yyyy-MM-dd',
+            'Y-m-d H:i:s' => 'yyyy-MM-dd HH:mm:ss',
+            default => null,
+        };
     }
 
     /**
@@ -91,6 +78,9 @@ class Converter
      */
     public static function toElasticAnalyzer(?string $analyzer): ?string
     {
+        if (is_null($analyzer)) {
+            return null;
+        }
         return in_array($analyzer, self::$analyzers) ? $analyzer : null;
     }
 }

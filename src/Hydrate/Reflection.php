@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Golly\Elastic\Hydrate;
 
@@ -7,7 +8,6 @@ use Golly\Elastic\Hydrate\Annotations\Mapping;
 use Golly\Hydrate\Annotations\Source;
 use Golly\Hydrate\Contracts\EntityInterface;
 use Golly\Hydrate\Reflection as HydrateReflection;
-
 
 /**
  *
@@ -21,14 +21,14 @@ class Reflection extends HydrateReflection
      * @param EntityInterface $entity
      * @return array
      */
-    public function map(EntityInterface $entity)
+    public static function mapping(EntityInterface $entity): array
     {
-        $reflectProperties = $this->getReflectProperties($entity);
-        $annotationReader = new AnnotationReader();
+        $properties = parent::getReflectProperties($entity);
+        $reader = new AnnotationReader();
         $result = [];
-        foreach ($reflectProperties as $name => $property) {
-            $mapping = $annotationReader->getPropertyAnnotation($property, Mapping::class);
-            $source = $annotationReader->getPropertyAnnotation($property, Source::class);
+        foreach ($properties as $name => $property) {
+            $mapping = $reader->getPropertyAnnotation($property, Mapping::class);
+            $source = $reader->getPropertyAnnotation($property, Source::class);
             if ($mapping instanceof Mapping) {
                 if ($mapping->type == 'relation') {
                     continue;

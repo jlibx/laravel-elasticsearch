@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Golly\Elastic\Hydrate;
 
@@ -21,62 +22,61 @@ class ElasticEntity extends Entity
      *
      * @var int
      */
-    public $took = 0;
+    public int $took = 0;
 
     /**
      * @Source(field="timed_out")
      * @var bool
      */
-    public $timedOut = false;
+    public bool $timedOut = false;
 
     /**
      * @Source(field="hits.total")
-     * @var int
+     * @var int|array
      */
-    public $total = 0;
+    public mixed $total = 0;
 
     /**
      * @Source(field="hits.max_score")
-     * @var
+     * @var float
      */
-    public $maxScore;
+    public float $maxScore;
 
     /**
      * @Source(field="hits.hits")
      * @var array
      */
-    public $source = [];
+    public array $source = [];
 
     /**
      * @var array
      */
-    public $aggregations = [];
+    public array $aggregations = [];
 
     /**
      * @return array
      */
-    public static function mapping()
+    public static function mapping(): array
     {
-        $self = new static();
-
-        return $self->newReflection()->map($self);
+        return Reflection::mapping(new static());
     }
 
     /**
+     * @param string $key
      * @return array
      */
-    public function getIds()
+    public function pluck(string $key = '_id'): array
     {
-        return Arr::pluck($this->source, '_id');
+        return Arr::pluck($this->source, $key);
     }
 
     /**
-     * @param $prePage
-     * @param $currentPage
+     * @param int $prePage
+     * @param int $currentPage
      * @param Collection|null $items
      * @return LengthAwarePaginator
      */
-    public function paginate($prePage, $currentPage, Collection $items = null)
+    public function paginate(int $prePage, int $currentPage, ?Collection $items = null): LengthAwarePaginator
     {
         $items = is_null($items) ? $this->source : $items;
         if (is_array($this->total)) {
@@ -86,14 +86,6 @@ class ElasticEntity extends Entity
         return new LengthAwarePaginator(
             $items, $this->total, $prePage, $currentPage
         );
-    }
-
-    /**
-     * @return Reflection
-     */
-    protected function newReflection()
-    {
-        return new Reflection();
     }
 
 }

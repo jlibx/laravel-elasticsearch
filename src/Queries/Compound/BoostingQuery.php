@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Compound;
-
 
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Queries\Query;
@@ -24,20 +24,20 @@ class BoostingQuery extends Query
     protected QueryInterface $negative;
 
     /**
-     * @var int|float
+     * @var mixed
      */
-    protected int|float $negativeBoost;
+    protected mixed $negativeBoost;
 
     /**
      * BoostingQuery constructor.
      * @param QueryInterface $positive
      * @param QueryInterface $negative
-     * @param $negativeBoost
+     * @param mixed $negativeBoost
      */
     public function __construct(
         QueryInterface $positive,
         QueryInterface $negative,
-        $negativeBoost
+        mixed $negativeBoost
     )
     {
         $this->positive = $positive;

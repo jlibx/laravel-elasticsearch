@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Events;
 
@@ -15,7 +15,7 @@ class ModelUnsearchable
     /**
      * @var Model
      */
-    public $model;
+    public Model $model;
 
     /**
      * ModelRemoved constructor.

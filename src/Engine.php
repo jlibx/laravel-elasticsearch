@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
  * Class ElasticEngine
  * @package Golly\Elastic
  */
-class ElasticEngine implements EngineInterface
+class Engine implements EngineInterface
 {
 
     /**
@@ -27,9 +27,9 @@ class ElasticEngine implements EngineInterface
     protected Client $elastic;
 
     /**
-     * @var ElasticBuilder
+     * @var Builder
      */
-    protected ElasticBuilder $builder;
+    protected Builder $builder;
 
     /**
      * ElasticEngine constructor.
@@ -78,17 +78,17 @@ class ElasticEngine implements EngineInterface
             return false;
         }
         $params['body'] = [];
-        $models->each(function ($model) use (&$params) {
-            /**
-             * @var Model|HasElasticsearch $model
-             */
+        foreach ($models as $model) {
             $params['body'][] = [
                 'update' => [
                     '_id' => $model->getSearchKey(),
                     '_index' => $model->getSearchIndex(),
                 ]
             ];
-            $model->pushSoftDeleteMetadata();
+            /**
+             * @var Model|HasElasticsearch $model
+             */
+            $model->prepareSoftDeletedMetadata();
             $params['body'][] = [
                 'doc' => array_merge(
                     $model->toSearchArray(),
@@ -96,7 +96,7 @@ class ElasticEngine implements EngineInterface
                 ),
                 'doc_as_upsert' => true
             ];
-        });
+        }
 
         $this->elastic->bulk($params);
 
@@ -110,25 +110,24 @@ class ElasticEngine implements EngineInterface
     public function delete(Collection $models): bool
     {
         $params['body'] = [];
-        $models->each(function ($model) use (&$params) {
+        foreach ($models as $model) {
             $params['body'][] = [
                 'delete' => [
                     '_id' => $model->getSearchKey(),
                     '_index' => $model->getSearchIndex()
                 ]
             ];
-        });
-
+        }
         $this->elastic->bulk($params);
 
         return true;
     }
 
     /**
-     * @param ElasticBuilder $builder
+     * @param Builder $builder
      * @return $this
      */
-    public function setBuilder(ElasticBuilder $builder): static
+    public function setBuilder(Builder $builder): self
     {
         $this->builder = $builder;
 

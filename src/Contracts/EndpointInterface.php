@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Contracts;
 
@@ -15,7 +15,7 @@ interface EndpointInterface
     public function getName(): string;
 
     /**
-     * @return array|null
+     * @return array
      */
-    public function normalize(): ?array;
+    public function normalize(): array;
 }

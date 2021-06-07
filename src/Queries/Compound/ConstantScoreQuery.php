@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Compound;
 
-
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Queries\Query;
 

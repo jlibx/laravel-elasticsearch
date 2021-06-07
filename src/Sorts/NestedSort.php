@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Sorts;
-
 
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Contracts\SortInterface;

@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\Joining;
-
 
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Queries\Query;
@@ -17,12 +16,12 @@ class HasParentQuery extends Query
     /**
      * @var string
      */
-    protected $parentType;
+    protected string $parentType;
 
     /**
      * @var QueryInterface
      */
-    protected $query;
+    protected QueryInterface $query;
 
     /**
      * HasParentQuery constructor.
@@ -40,7 +39,7 @@ class HasParentQuery extends Query
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'has_parent';
     }
@@ -48,7 +47,7 @@ class HasParentQuery extends Query
     /**
      * @return array
      */
-    public function getTypeValue()
+    public function getTypeValue(): array
     {
         return $this->merge([
             'parent_type' => $this->parentType,
