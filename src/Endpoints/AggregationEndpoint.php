@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Endpoints;
-
 
 use Golly\Elastic\Aggregations\Bucket\RangeAggregation;
 use Golly\Elastic\Aggregations\Bucket\TermsAggregation;
@@ -49,7 +48,7 @@ class AggregationEndpoint extends Endpoint
      * @param array $ranges
      * @return $this
      */
-    public function addRangeBucket(string $field, array $ranges): static
+    public function addRangeBucket(string $field, array $ranges): self
     {
         $aggregation = new RangeAggregation($field, $ranges);
         $this->addContainer($aggregation, $aggregation->getName());
@@ -62,7 +61,7 @@ class AggregationEndpoint extends Endpoint
      * @param array $script
      * @return $this
      */
-    public function addTermsBucket(string $field, array $script = []): static
+    public function addTermsBucket(string $field, array $script = []): self
     {
         $aggregation = new TermsAggregation($field, $script);
         $this->addContainer($aggregation, $aggregation->getName());
@@ -75,7 +74,7 @@ class AggregationEndpoint extends Endpoint
      * @param string $type
      * @return $this
      */
-    public function addAggregation(string $field, string $type): static
+    public function addAggregation(string $field, string $type): self
     {
         $aggregation = match ($type) {
             'stats' => new StatsAggregation($field),

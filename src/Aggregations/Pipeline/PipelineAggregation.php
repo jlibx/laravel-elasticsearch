@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Golly\Elastic\Aggregations\Pipeline;
 
-
 use Golly\Elastic\Aggregations\Aggregation;
 
 /**

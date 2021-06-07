@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Endpoints;
-
 
 use Golly\Elastic\Sorts\FieldSort;
 

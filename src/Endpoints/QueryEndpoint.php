@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Golly\Elastic\Endpoints;
 
-
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Queries\Compound\BoolQuery;
 use Golly\Elastic\Queries\FullText\MatchQuery;
