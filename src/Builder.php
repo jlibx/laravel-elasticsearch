@@ -173,6 +173,11 @@ class Builder
         if (is_array($column)) {
             return $this->addArrayOfWheres($column, $type);
         }
+        if ($column instanceof QueryInterface) {
+            $this->queryEndpoint->addToBoolQuery($column, $type);
+            return $this;
+        }
+
         // 预处理操作符和查询值
         [$value, $operator] = $this->prepareValueAndOperator(
             $value, $operator, func_num_args() === 2
@@ -180,13 +185,9 @@ class Builder
         if ($column instanceof Closure && is_null($operator)) {
             return $this->whereBool($column, $type);
         }
-        if ($column instanceof QueryInterface) {
-            $this->queryEndpoint->addToBoolQuery($column, $type);
-        }
         if ($this->isInvalidOperator($operator)) {
             [$value, $operator] = [$operator, '='];
         }
-
         if (is_null($value)) {
             return $this->whereNull($column, $operator !== '=');
         }
