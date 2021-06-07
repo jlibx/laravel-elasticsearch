@@ -119,11 +119,11 @@ array:4 [
 
 在orm中，可直接用DB门面类来执行MySQL操作，相当于实例化`Illuminate\Database\Query\Builder`类。
 
-那么ES应该也可以这样操作，所以我也加入了一个`ElasticBuilder`类
+那么ES应该也可以这样操作，所以我也加入了一个`Builder`类
 
-当然`Model`模型依赖可以按原来的方式操作，最终都是`ElasticBuilder`来构造查询参数
+当然`Model`模型依赖可以按原来的方式操作，最终都是`Builder`来构造查询参数
 ```php
-(new ElasticBuilder())
+(new Builder())
     ->select(['id'])
     ->from('index')
     ->where(function (ElasticBuilder $query) {
@@ -210,7 +210,7 @@ array:3 [
 直接通过ES检索数据
 
 ```
-User::elastic()->getRaw()
+User::elastic()->raw()
 ```
 
 通过ES检索数据后，执行MySQL查询
