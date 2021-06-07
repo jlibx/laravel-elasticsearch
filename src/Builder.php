@@ -633,10 +633,30 @@ class Builder
     }
 
     /**
+     * Prepare the value and operator for a where clause.
+     *
+     * @param mixed $value
+     * @param mixed $operator
+     * @param bool $useDefault
+     * @return array
+     * @throws ElasticException
+     */
+    public function prepareValueAndOperator(mixed $value = null, mixed $operator = null, bool $useDefault = false): array
+    {
+        if ($useDefault) {
+            return [$operator, '='];
+        } elseif ($this->isInvalidOperatorAndValue($operator, $value)) {
+            throw new ElasticException('Illegal operator and value combination.');
+        }
+
+        return [$value, $operator];
+    }
+
+    /**
      * @param string $relation
      * @return $this
      */
-    protected function setRelation(string $relation): self
+    public function setRelation(string $relation): self
     {
         $this->queryEndpoint->setRelation($relation);
 
@@ -663,27 +683,6 @@ class Builder
         });
 
         return $this;
-    }
-
-
-    /**
-     * Prepare the value and operator for a where clause.
-     *
-     * @param mixed $value
-     * @param mixed $operator
-     * @param bool $useDefault
-     * @return array
-     * @throws ElasticException
-     */
-    protected function prepareValueAndOperator(mixed $value = null, mixed $operator = null, bool $useDefault = false): array
-    {
-        if ($useDefault) {
-            return [$operator, '='];
-        } elseif ($this->isInvalidOperatorAndValue($operator, $value)) {
-            throw new ElasticException('Illegal operator and value combination.');
-        }
-
-        return [$value, $operator];
     }
 
     /**

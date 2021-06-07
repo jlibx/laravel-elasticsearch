@@ -18,7 +18,7 @@ use Illuminate\Support\Traits\ForwardsCalls;
 /**
  * Class Builder
  * @package Golly\Elastic\Eloquent
- * @mixin Builder
+ * @mixin EsBuilder
  */
 class Builder
 {
@@ -64,29 +64,6 @@ class Builder
      * @param $column
      * @param null $operator
      * @param null $value
-     * @return $this
-     * @throws ElasticException
-     */
-    public function must($column, $operator = null, $value = null): self
-    {
-        return $this->where($column, $operator, $value);
-    }
-
-    /**
-     * @param string $column
-     * @param string $value
-     * @return $this
-     * @throws ElasticException
-     */
-    public function mustLike(string $column, string $value): self
-    {
-        return $this->must($column, 'like', $value);
-    }
-
-    /**
-     * @param $column
-     * @param null $operator
-     * @param null $value
      * @param string $type
      * @return $this
      * @throws ElasticException
@@ -105,20 +82,6 @@ class Builder
     }
 
     /**
-     * @param callable $callback
-     * @param string $type
-     * @return $this
-     */
-    public function whereBool(callable $callback, string $type = 'must'): self
-    {
-        $callback($query = $this->model->newEloquentEsBuilder());
-
-        $this->esBuilder->addToBoolWhereQuery($query->getEsBuilder(), $type);
-
-        return $this;
-    }
-
-    /**
      * @param string $column
      * @param mixed $value
      * @return $this
@@ -128,6 +91,7 @@ class Builder
     {
         return $this->where($column, '=', $value);
     }
+
 
     /**
      * @param string $column
@@ -141,36 +105,50 @@ class Builder
     }
 
     /**
+     * @param callable $callback
+     * @param string $type
+     * @return $this
+     */
+    public function whereBool(callable $callback, string $type = 'must'): self
+    {
+        $callback($query = $this->model->newEloquentEsBuilder());
+
+        $this->esBuilder->addToBoolWhereQuery($query->getEsBuilder(), $type);
+
+        return $this;
+    }
+
+
+    /**
+     * 此方法有待完善，建议使用 relation.field 查询
+     *
+     * @param string $relation
+     * @param Closure $callback
+     * @return $this
+     */
+    public function whereHas(string $relation, Closure $callback): self
+    {
+        $builder = $this->model->newEloquentEsBuilder();
+        $builder->getEsBuilder()->setRelation($relation);
+        $callback($builder);
+        $tWheres = $builder->getEsBuilder()->getBoolQueryWheres();
+        foreach ($tWheres as $type => $wheres) {
+            foreach ($wheres as $where) {
+                $this->esBuilder->addToBoolQuery($where, $type);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @param mixed $column
      * @param mixed $operator
      * @param mixed $value
      * @return $this
      * @throws ElasticException
      */
-    public function should($column, $operator = null, $value = null)
-    {
-        return $this->orWhere($column, $operator, $value);
-    }
-
-    /**
-     * @param string $column
-     * @param string $value
-     * @return $this
-     * @throws ElasticException
-     */
-    public function shouldLike(string $column, string $value)
-    {
-        return $this->should($column, 'like', $value);
-    }
-
-    /**
-     * @param mixed $column
-     * @param mixed $operator
-     * @param mixed $value
-     * @return $this
-     * @throws ElasticException
-     */
-    public function orWhere($column, $operator = null, $value = null)
+    public function orWhere(mixed $column, mixed $operator = null, mixed $value = null): self
     {
         [$value, $operator] = $this->esBuilder->prepareValueAndOperator(
             $value, $operator, func_num_args() === 2
@@ -185,36 +163,62 @@ class Builder
      * @return $this
      * @throws ElasticException
      */
-    public function orWhereLike(string $column, string $value)
+    public function orWhereLike(string $column, string $value): self
     {
         return $this->orWhere($column, 'like', $value);
     }
 
     /**
-     * @param string $relation
-     * @param Closure $callback
+     * @param $column
+     * @param null $operator
+     * @param null $value
      * @return $this
+     * @throws ElasticException
      */
-    public function whereHas(string $relation, Closure $callback)
+    public function must($column, $operator = null, $value = null): self
     {
-        $builder = $this->model->newEloquentEsBuilder();
-        $builder->setRelation($relation);
-        $callback($builder);
-        $tWheres = $builder->getEsBuilder()->getBoolQueryWheres();
-        foreach ($tWheres as $type => $wheres) {
-            foreach ($wheres as $where) {
-                $this->esBuilder->addToBoolQuery($where, $type);
-            }
-        }
+        return $this->where($column, $operator, $value);
+    }
 
-        return $this;
+    /**
+     * @param string $column
+     * @param string $value
+     * @return $this
+     * @throws ElasticException
+     */
+    public function mustLike(string $column, string $value): self
+    {
+        return $this->whereLike($column, $value);
+    }
+
+    /**
+     * @param mixed $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     * @throws ElasticException
+     */
+    public function should(mixed $column, mixed $operator = null, mixed $value = null): self
+    {
+        return $this->orWhere($column, $operator, $value);
+    }
+
+    /**
+     * @param string $column
+     * @param string $value
+     * @return $this
+     * @throws ElasticException
+     */
+    public function shouldLike(string $column, string $value): self
+    {
+        return $this->should($column, 'like', $value);
     }
 
     /**
      * @param array $relations
      * @return $this
      */
-    public function with(array $relations)
+    public function with(array $relations): self
     {
         $this->relations = $relations;
 
@@ -225,7 +229,7 @@ class Builder
      * @param array $relations
      * @return $this
      */
-    public function withCount(array $relations)
+    public function withCount(array $relations): self
     {
         $this->countRelations = $relations;
 
@@ -235,10 +239,23 @@ class Builder
     /**
      * @param array $columns
      * @param array $options
+     * @return Collection
+     * @throws ElasticException
+     */
+    public function get(array $columns = [], array $options = []): Collection
+    {
+        $entity = $this->raw($columns, $options);
+
+        return $this->toCollection($entity);
+    }
+
+    /**
+     * @param array $columns
+     * @param array $options
      * @return ElasticEntity
      * @throws ElasticException
      */
-    public function raw(array $columns = [], array $options = [])
+    public function raw(array $columns = [], array $options = []): ElasticEntity
     {
         if ($this->model->useSoftDelete()) {
             $this->esBuilder->where(
@@ -254,23 +271,10 @@ class Builder
     /**
      * @param array $columns
      * @param array $options
-     * @return Collection
-     * @throws ElasticException
-     */
-    public function get(array $columns = [], array $options = [])
-    {
-        $entity = $this->raw($columns, $options);
-
-        return $this->toCollection($entity);
-    }
-
-    /**
-     * @param array $columns
-     * @param array $options
      * @return Model|null
      * @throws ElasticException
      */
-    public function first(array $columns = [], array $options = [])
+    public function first(array $columns = [], array $options = []): ?Model
     {
         $this->esBuilder->limit(1);
 
@@ -283,7 +287,7 @@ class Builder
      * @return ElasticEntity
      * @throws ElasticException
      */
-    public function rawFirst(array $columns = [], array $options = [])
+    public function firstRaw(array $columns = [], array $options = []): ElasticEntity
     {
         $this->esBuilder->limit(1);
 
@@ -291,16 +295,21 @@ class Builder
     }
 
     /**
-     * @param null $perPage
      * @param array $columns
-     * @param string $pageName
      * @param null $page
+     * @param null $perPage
+     * @param string $pageName
      * @return LengthAwarePaginator
      * @throws ElasticException
      */
-    public function paginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
+    public function paginate(
+        array $columns = [],
+        $page = null,
+        $perPage = null,
+        string $pageName = 'page'
+    ): LengthAwarePaginator
     {
-        [$page, $prePage] = $this->prepareCurrentPage($perPage, $pageName, $page);
+        [$page, $prePage] = $this->prepareCurrentPage($page, $perPage, $pageName);
         $offset = ($page - 1) * $prePage;
         $this->esBuilder->offset($offset)->limit($prePage);
         $entity = $this->raw($columns);
@@ -310,16 +319,21 @@ class Builder
     }
 
     /**
-     * @param null $perPage
      * @param array $columns
+     * @param int|null $page
+     * @param int|null $perPage
      * @param string $pageName
-     * @param null $page
      * @return LengthAwarePaginator
      * @throws ElasticException
      */
-    public function rawPaginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
+    public function paginateRaw(
+        array $columns = [],
+        int $page = null,
+        int $perPage = null,
+        string $pageName = 'page'
+    ): LengthAwarePaginator
     {
-        [$page, $prePage] = $this->prepareCurrentPage($perPage, $pageName, $page);
+        [$page, $prePage] = $this->prepareCurrentPage($page, $perPage, $pageName);
         $offset = ($page - 1) * $prePage;
         $this->esBuilder->offset($offset)->limit($prePage);
         $entity = $this->raw($columns);
@@ -330,15 +344,15 @@ class Builder
     /**
      * @return void
      */
-    public function dd()
+    public function dd(): void
     {
-        $this->esBuilder->dd();
+        dd($this->esBuilder->toSearchParams());
     }
 
     /**
-     * @return Builder
+     * @return EsBuilder
      */
-    public function getEsBuilder(): Builder
+    public function getEsBuilder(): EsBuilder
     {
         return $this->esBuilder;
     }
@@ -346,7 +360,7 @@ class Builder
     /**
      * @return Model|HasElasticsearch
      */
-    public function getModel()
+    public function getModel(): Model
     {
         return $this->model;
     }
@@ -355,7 +369,7 @@ class Builder
      * @param Model|HasElasticsearch $model
      * @return $this
      */
-    public function setModel($model)
+    public function setModel(Model $model): self
     {
         $this->model = $model;
         $this->esBuilder->from($model->getSearchIndex());
@@ -367,9 +381,9 @@ class Builder
      * @param ElasticEntity $entity
      * @return Collection
      */
-    protected function toCollection(ElasticEntity $entity)
+    protected function toCollection(ElasticEntity $entity): Collection
     {
-        $ids = $entity->getIds();
+        $ids = $entity->pluck();
         $fields = implode(',', $ids);
         $collection = $this->model->newQuery()->orderByRaw(
             DB::raw("field(id,{$fields})")
@@ -386,12 +400,12 @@ class Builder
     }
 
     /**
-     * @param $perPage
-     * @param $pageName
-     * @param $page
+     * @param int|null $page
+     * @param int|null $perPage
+     * @param string $pageName
      * @return array
      */
-    protected function prepareCurrentPage($perPage, $pageName, $page)
+    protected function prepareCurrentPage(?int $page, ?int $perPage, string $pageName = 'page'): array
     {
         return [
             $page ?: Paginator::resolveCurrentPage($pageName),
