@@ -230,8 +230,8 @@ class Builder
 
     /**
      * @param mixed $column
-     * @param mixed|null $operator
-     * @param mixed|null $value
+     * @param mixed $operator
+     * @param mixed $value
      * @return $this
      * @throws ElasticException
      */
@@ -331,7 +331,7 @@ class Builder
     }
 
     /**
-     * TODO 优化逻辑，有点绕
+     * 仅仅是为了过滤字段的拼接，后续可以调整为复杂的父子文档查询
      *
      * @param string $relation
      * @param callable $callback
