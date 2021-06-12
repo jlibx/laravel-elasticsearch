@@ -1,9 +1,7 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Golly\Elastic;
-
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
@@ -88,7 +86,7 @@ class Engine implements EngineInterface
             /**
              * @var Model|HasElasticsearch $model
              */
-            $model->prepareSoftDeletedMetadata();
+            $model->pushSoftDeletedMetadata();
             $params['body'][] = [
                 'doc' => array_merge(
                     $model->toSearchArray(),

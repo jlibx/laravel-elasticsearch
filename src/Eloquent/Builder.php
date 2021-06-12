@@ -299,6 +299,7 @@ class Builder
      * @param null $page
      * @param null $perPage
      * @param string $pageName
+     * @param bool $raw
      * @return LengthAwarePaginator
      * @throws ElasticException
      */
@@ -306,47 +307,20 @@ class Builder
         array $columns = [],
         $page = null,
         $perPage = null,
-        string $pageName = 'page'
+        string $pageName = 'page',
+        bool $raw = false
     ): LengthAwarePaginator
     {
         [$page, $prePage] = $this->prepareCurrentPage($page, $perPage, $pageName);
         $offset = ($page - 1) * $prePage;
         $this->esBuilder->offset($offset)->limit($prePage);
         $entity = $this->raw($columns);
+        if ($raw) {
+            return $entity->paginate($prePage, $page);
+        }
         $collection = $this->toCollection($entity);
 
         return $entity->paginate($prePage, $page, $collection);
-    }
-
-    /**
-     * @param array $columns
-     * @param int|null $page
-     * @param int|null $perPage
-     * @param string $pageName
-     * @return LengthAwarePaginator
-     * @throws ElasticException
-     */
-    public function paginateRaw(
-        array $columns = [],
-        int $page = null,
-        int $perPage = null,
-        string $pageName = 'page'
-    ): LengthAwarePaginator
-    {
-        [$page, $prePage] = $this->prepareCurrentPage($page, $perPage, $pageName);
-        $offset = ($page - 1) * $prePage;
-        $this->esBuilder->offset($offset)->limit($prePage);
-        $entity = $this->raw($columns);
-
-        return $entity->paginate($prePage, $page);
-    }
-
-    /**
-     * @return void
-     */
-    public function dd(): void
-    {
-        dd($this->esBuilder->toSearchParams());
     }
 
     /**

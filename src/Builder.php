@@ -5,7 +5,6 @@ namespace Golly\Elastic;
 
 use Closure;
 use Golly\Elastic\Contracts\AggregationInterface;
-use Golly\Elastic\Contracts\EndpointInterface;
 use Golly\Elastic\Contracts\QueryInterface;
 use Golly\Elastic\Contracts\SortInterface;
 use Golly\Elastic\Endpoints\AggregationEndpoint;

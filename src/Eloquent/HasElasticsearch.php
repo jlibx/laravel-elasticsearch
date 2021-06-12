@@ -104,7 +104,7 @@ trait HasElasticsearch
     /**
      * @return void
      */
-    public function prepareSoftDeletedMetadata(): void
+    public function pushSoftDeletedMetadata(): void
     {
         if ($this->useSoftDelete()) {
             /** @var static|SoftDeletes $this */
@@ -178,7 +178,6 @@ trait HasElasticsearch
     {
         return $this->toArray();
     }
-
 
     /**
      * Before searchable

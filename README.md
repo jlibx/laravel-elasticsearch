@@ -7,7 +7,7 @@
 namespace App\Entities;
 
 
-use Golly\Elastic\Hydrate\Entity;
+use Golly\Elastic\Hydrate\ElasticEntity;
 use Golly\Elastic\Hydrate\Annotations\Mapping;
 use Golly\Elastic\Exceptions\ElasticException;
 
@@ -15,7 +15,7 @@ use Golly\Elastic\Exceptions\ElasticException;
  * Class UserEntity
  * @package App\Entities
  */
-class UserEntity extends Entity
+class UserEntity extends ElasticEntity
 {
 
     /**
@@ -23,55 +23,48 @@ class UserEntity extends Entity
      *
      * @var int
      */
-    public $id;
+    public int $id;
 
     /**
      * @Mapping(type="text", analyzer="ik_smart")
      *
-     * @var
+     * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * @Mapping(type="date", format="Y-m-d")
      *
      * @var string
      */
-    public $date;
+    public string $date;
 
     /**
      * @Mapping(type="relation")
      *
      * @var array|UserAddressEntity[]
      */
-    public $address = [];
+    public array $address = [];
 
     /**
-     * @param boolean $relation
      * @return array
-     * @throws ElasticException
      */
-    public static function mapping($relation = true)
+    public static function mapping():array
     {
-        $mapping = parent::mapping($relation);
-        if ($relation) {
-            $mapping = array_merge($mapping, [
-                'address' => [
-                    'properties' => UserAddressEntity::mapping($relation)
-                ]
-            ]);
-        }
-
-        return $mapping;
+      
+        return array_merge(parent::mapping(), [
+            'address' => [
+                'properties' => UserAddressEntity::mapping()
+            ]
+        ]);
     }
 
     /**
      * @param array $data
-     * @param boolean $original
+     * @param bool $original
      * @return UserEntity
-     * @throws ElasticException
      */
-    public function toObject(array $data, $original = true)
+    public function toObject(array $data, bool $original = true): static
     {
         $entity = parent::toObject($data, $original);
         if ($entity->address) {

@@ -30,10 +30,20 @@ class ExistsQuery extends Query
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getTypeValue(): mixed
+    public function getTypeValue(): array
     {
-        return $this->field;
+        return [$this->field];
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            $this->getType() => (string)$this->getTypeValue()
+        ];
     }
 }
