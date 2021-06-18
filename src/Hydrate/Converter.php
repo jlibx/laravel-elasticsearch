@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Golly\Elastic\Hydrate;
 
@@ -9,28 +9,27 @@ namespace Golly\Elastic\Hydrate;
  */
 class Converter
 {
-    const TYPE_TINYINT = 'tinyint';
-    const TYPE_SMALLINT = 'smallint';
-    const TYPE_MEDIUMINT = 'mediumint';
-    const TYPE_INTEGER = 'integer';
-    const TYPE_BIGINT = 'bigint';
-    const TYPE_CHAR = 'char';
-    const TYPE_STRING = 'string';
-    const TYPE_TINYTEXT = 'text';
-    const TYPE_TEXT = 'text';
-    const TYPE_FLOAT = 'float';
-    const TYPE_DOUBLE = 'double';
-    const TYPE_DECIMAL = 'decimal';
-    const TYPE_DATETIME = 'datetime';
-    const TYPE_TIMESTAMP = 'timestamp';
-    const TYPE_TIME = 'time';
-    const TYPE_DATE = 'date';
-    const TYPE_YEAR = 'year';
-    const TYPE_BINARY = 'binary';
-    const TYPE_BOOLEAN = 'boolean';
-    const TYPE_MONEY = 'money';
-    const TYPE_JSON = 'json';
-
+    public const TYPE_TINYINT = 'tinyint';
+    public const TYPE_SMALLINT = 'smallint';
+    public const TYPE_MEDIUMINT = 'mediumint';
+    public const TYPE_INTEGER = 'integer';
+    public const TYPE_BIGINT = 'bigint';
+    public const TYPE_CHAR = 'char';
+    public const TYPE_STRING = 'string';
+    public const TYPE_TINYTEXT = 'text';
+    public const TYPE_TEXT = 'text';
+    public const TYPE_FLOAT = 'float';
+    public const TYPE_DOUBLE = 'double';
+    public const TYPE_DECIMAL = 'decimal';
+    public const TYPE_DATETIME = 'datetime';
+    public const TYPE_TIMESTAMP = 'timestamp';
+    public const TYPE_TIME = 'time';
+    public const TYPE_DATE = 'date';
+    public const TYPE_YEAR = 'year';
+    public const TYPE_BINARY = 'binary';
+    public const TYPE_BOOLEAN = 'boolean';
+    public const TYPE_MONEY = 'money';
+    public const TYPE_JSON = 'json';
     public const IK_SMART = 'ik_smart';
 
     /**

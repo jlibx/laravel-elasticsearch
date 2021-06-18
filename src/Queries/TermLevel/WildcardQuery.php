@@ -50,7 +50,7 @@ class WildcardQuery extends Query
      * @param string $value
      * @return string
      */
-    protected function handleValue(string $value)
+    protected function handleValue(string $value): string
     {
         if ($this->hasMatched($value)) {
             return $value;
@@ -63,7 +63,7 @@ class WildcardQuery extends Query
      * @param string $value
      * @return bool
      */
-    protected function hasMatched(string $value)
+    protected function hasMatched(string $value): bool
     {
         return str_starts_with($value, '*') && str_ends_with($value, '*');
     }

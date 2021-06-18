@@ -81,7 +81,7 @@ class RangeAggregation extends BucketAggregation
      * @param mixed $key
      * @return $this
      */
-    public function addRange(mixed $from = null, mixed $to = null, mixed $key = null): self
+    public function addRange(mixed $from = null, mixed $to = null, mixed $key = null): static
     {
         $range = array_filter([
             'from' => $from,

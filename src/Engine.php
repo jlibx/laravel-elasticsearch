@@ -8,11 +8,7 @@ namespace Golly\Elastic;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Golly\Elastic\Contracts\EngineInterface;
-use Golly\Elastic\Eloquent\HasElasticsearch;
 use Golly\Elastic\Hydrate\ElasticEntity;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Class ElasticEngine
@@ -20,6 +16,8 @@ use Illuminate\Support\Facades\Log;
  */
 class Engine implements EngineInterface
 {
+
+    protected array $hosts = [];
 
     /**
      * @var Client
@@ -34,18 +32,16 @@ class Engine implements EngineInterface
     /**
      * ElasticEngine constructor.
      */
-    public function __construct()
+    public function __construct(array $hosts)
     {
-        $this->elastic = ClientBuilder::create()->setHosts(
-            config('elastic.hosts')
-        )->build();
+        $this->elastic = ClientBuilder::create()->setHosts($hosts)->build();
     }
 
     /**
      * @param array $params
      * @return $this
      */
-    public function index(array $params = []): self
+    public function index(array $params = []): static
     {
         $this->elastic->index($params);
 
@@ -58,76 +54,27 @@ class Engine implements EngineInterface
      */
     public function search(array $options = []): ElasticEntity
     {
-        $params = $this->builder->toSearchParams();
-        // 记录执行参数
-        if (app()->environment('local')) {
-            Log::info('elasticsearch params ' . json_encode($params));
-        }
-        $result = $this->elastic->search($params);
+        $result = $this->elastic->search(
+            $this->builder->toSearchParams()
+        );
 
         return ElasticEntity::instance($result, false);
     }
 
     /**
-     * @param Collection $models
-     * @return bool
+     * @param array $params
+     * @return array
      */
-    public function update(Collection $models): bool
+    public function bulk(array $params): array
     {
-        if ($models->isEmpty()) {
-            return false;
-        }
-        $params['body'] = [];
-        foreach ($models as $model) {
-            $params['body'][] = [
-                'update' => [
-                    '_id' => $model->getSearchKey(),
-                    '_index' => $model->getSearchIndex(),
-                ]
-            ];
-            /**
-             * @var Model|HasElasticsearch $model
-             */
-            $model->prepareSoftDeletedMetadata();
-            $params['body'][] = [
-                'doc' => array_merge(
-                    $model->toSearchArray(),
-                    $model->getSearchMetadata()
-                ),
-                'doc_as_upsert' => true
-            ];
-        }
-
-        $this->elastic->bulk($params);
-
-        return true;
-    }
-
-    /**
-     * @param Collection $models
-     * @return bool
-     */
-    public function delete(Collection $models): bool
-    {
-        $params['body'] = [];
-        foreach ($models as $model) {
-            $params['body'][] = [
-                'delete' => [
-                    '_id' => $model->getSearchKey(),
-                    '_index' => $model->getSearchIndex()
-                ]
-            ];
-        }
-        $this->elastic->bulk($params);
-
-        return true;
+        return $this->elastic->bulk($params);
     }
 
     /**
      * @param Builder $builder
      * @return $this
      */
-    public function setBuilder(Builder $builder): self
+    public function setBuilder(Builder $builder): static
     {
         $this->builder = $builder;
 

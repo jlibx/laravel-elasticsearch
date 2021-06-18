@@ -47,7 +47,7 @@ class FunctionScoreQuery extends Query
         array $params = [],
         array $options = [],
         QueryInterface $query = null
-    ): self
+    ): static
     {
         $function = [
             'script_score' => [
@@ -79,7 +79,7 @@ class FunctionScoreQuery extends Query
         string $modifier = 'none',
         QueryInterface $query = null,
         $missing = null
-    ): self
+    ): static
     {
         $function = [
             'field_value_factor' => array_filter([
@@ -99,7 +99,7 @@ class FunctionScoreQuery extends Query
      * @param QueryInterface|null $query
      * @return $this
      */
-    public function addWeightFunction($weight, QueryInterface $query = null): self
+    public function addWeightFunction($weight, QueryInterface $query = null): static
     {
         $function = [
             'weight' => $weight,
@@ -114,7 +114,7 @@ class FunctionScoreQuery extends Query
      * @param QueryInterface|null $query
      * @return $this
      */
-    public function addRandomFunction($seed = null, QueryInterface $query = null): self
+    public function addRandomFunction($seed = null, QueryInterface $query = null): static
     {
         $function = [
             'random_score' => $seed ? ['seed' => $seed] : new stdClass(),
@@ -140,7 +140,7 @@ class FunctionScoreQuery extends Query
         array $options = [],
         QueryInterface $query = null,
         $weight = null
-    ): self
+    ): static
     {
         $function = array_filter([
             $type => array_merge(
@@ -158,7 +158,7 @@ class FunctionScoreQuery extends Query
      * @param array $function
      * @return $this
      */
-    public function addSimpleFunction(array $function): self
+    public function addSimpleFunction(array $function): static
     {
         $this->functions[] = $function;
 

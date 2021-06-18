@@ -53,7 +53,7 @@ class HighlightEndpoint extends Endpoint
      *
      * @return $this
      */
-    public function addField(string $name, array $params = []): self
+    public function addField(string $name, array $params = []): static
     {
         $this->fields[$name] = $params;
 

@@ -62,7 +62,7 @@ class QueryEndpoint extends Endpoint
      * @param string $relation
      * @return $this
      */
-    public function setRelation(string $relation): self
+    public function setRelation(string $relation): static
     {
         $this->relation = $relation;
 
@@ -82,7 +82,7 @@ class QueryEndpoint extends Endpoint
      * @param BoolQuery $query
      * @return $this
      */
-    public function setBoolQuery(BoolQuery $query): self
+    public function setBoolQuery(BoolQuery $query): static
     {
         $this->boolQuery = $query;
 
@@ -94,7 +94,7 @@ class QueryEndpoint extends Endpoint
      * @param string $boolType
      * @return $this
      */
-    public function addToBoolQuery(QueryInterface $query, string $boolType = 'must'): self
+    public function addToBoolQuery(QueryInterface $query, string $boolType = 'must'): static
     {
         $this->boolQuery->addQuery($query, $boolType);
 
@@ -106,7 +106,7 @@ class QueryEndpoint extends Endpoint
      * @param string $boolType
      * @return $this
      */
-    public function addExistsToBoolQuery(string $field, string $boolType): self
+    public function addExistsToBoolQuery(string $field, string $boolType): static
     {
         $field = $this->toRelationField($field);
         $this->addToBoolQuery(new ExistsQuery($field), $boolType);
@@ -120,7 +120,7 @@ class QueryEndpoint extends Endpoint
      * @param string $boolType
      * @return $this
      */
-    public function addTermsToBoolQuery(string $field, array $values, string $boolType): self
+    public function addTermsToBoolQuery(string $field, array $values, string $boolType): static
     {
         $field = $this->toRelationField($field);
         $this->addToBoolQuery(new TermsQuery($field, $values), $boolType);
@@ -135,7 +135,7 @@ class QueryEndpoint extends Endpoint
      * @param string $boolType
      * @return $this
      */
-    public function addOpticalToBoolQuery(string $field, string $operator, mixed $value, string $boolType): self
+    public function addOpticalToBoolQuery(string $field, string $operator, mixed $value, string $boolType): static
     {
         $field = $this->toRelationField($field);
         if ($query = $this->toQuery($field, $operator, $value)) {
@@ -152,7 +152,7 @@ class QueryEndpoint extends Endpoint
      * @param string $boolType
      * @return $this
      */
-    public function addBetweenToBoolQuery(string $field, int|float $min, int|float $max, string $boolType): self
+    public function addBetweenToBoolQuery(string $field, int|float $min, int|float $max, string $boolType): static
     {
         $field = $this->toRelationField($field);
         $rQuery = (new RangeQuery($field))

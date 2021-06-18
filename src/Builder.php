@@ -15,9 +15,6 @@ use Golly\Elastic\Endpoints\SortEndpoint;
 use Golly\Elastic\Exceptions\ElasticException;
 use Golly\Elastic\Hydrate\ElasticEntity;
 use Golly\Elastic\Queries\Compound\BoolQuery;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Arr;
 
 /**
  * Class Builder
@@ -119,19 +116,20 @@ class Builder
     /**
      * ElasticBuilder constructor.
      */
-    public function __construct()
+    public function __construct(array $hosts)
     {
         $this->queryEndpoint = new QueryEndpoint();
         $this->sortEndpoint = new SortEndpoint();
         $this->aggregationEndpoint = new AggregationEndpoint();
         $this->highlightEndpoint = new HighlightEndpoint();
+        $this->esEngine = (new Engine($hosts))->setBuilder($this);
     }
 
     /**
      * @param string $index
      * @return $this
      */
-    public function from(string $index): self
+    public function from(string $index): static
     {
         $this->index = $index;
 
@@ -142,7 +140,7 @@ class Builder
      * @param array $columns
      * @return $this
      */
-    public function select(array $columns = []): self
+    public function select(array $columns = []): static
     {
         $this->columns = $columns;
 
@@ -153,7 +151,7 @@ class Builder
      * @param array $columns
      * @return $this
      */
-    public function addSelect(array $columns = []): self
+    public function addSelect(array $columns = []): static
     {
         $this->columns = array_merge($this->columns, $columns);
 
@@ -168,7 +166,12 @@ class Builder
      * @return $this
      * @throws ElasticException
      */
-    public function where(mixed $column, mixed $operator = null, mixed $value = null, string $type = 'must'): self
+    public function where(
+        mixed $column,
+        mixed $operator = null,
+        mixed $value = null,
+        string $type = 'must'
+    ): static
     {
         if (is_array($column)) {
             return $this->addArrayOfWheres($column, $type);
@@ -206,7 +209,7 @@ class Builder
      * @return $this
      * @throws ElasticException
      */
-    public function must(string $column, mixed $operator = null, mixed $value = null): self
+    public function must(string $column, mixed $operator = null, mixed $value = null): static
     {
         return $this->where($column, $operator, $value);
     }
@@ -218,7 +221,7 @@ class Builder
      * @return $this
      * @throws ElasticException
      */
-    public function orWhere(mixed $column, mixed $operator = null, mixed $value = null): self
+    public function orWhere(mixed $column, mixed $operator = null, mixed $value = null): static
     {
         [$value, $operator] = $this->prepareValueAndOperator(
             $value, $operator, func_num_args() === 2
@@ -235,7 +238,7 @@ class Builder
      * @return $this
      * @throws ElasticException
      */
-    public function should(mixed $column, mixed $operator = null, mixed $value = null): self
+    public function should(mixed $column, mixed $operator = null, mixed $value = null): static
     {
         return $this->orWhere($column, $operator, $value);
     }
@@ -245,11 +248,8 @@ class Builder
      * @param array $values
      * @return $this
      */
-    public function whereIn(string $column, array $values): self
+    public function whereIn(string $column, array $values): static
     {
-        if ($values instanceof Arrayable) {
-            $values = $values->toArray();
-        }
         $this->queryEndpoint->addTermsToBoolQuery($column, $values, BoolQuery::MUST);
 
         return $this;
@@ -260,11 +260,8 @@ class Builder
      * @param array $values
      * @return $this
      */
-    public function whereNotIn(string $column, array $values): self
+    public function whereNotIn(string $column, array $values): static
     {
-        if ($values instanceof Arrayable) {
-            $values = $values->toArray();
-        }
         $this->queryEndpoint->addTermsToBoolQuery($column, $values, BoolQuery::MUST_NOT);
 
         return $this;
@@ -275,10 +272,10 @@ class Builder
      * @param false $not
      * @return $this
      */
-    public function whereNull(array $columns, bool $not = false): self
+    public function whereNull(array $columns, bool $not = false): static
     {
         $type = $not ? BoolQuery::MUST_NOT : BoolQuery::MUST;
-        foreach (Arr::wrap($columns) as $column) {
+        foreach ($columns as $column) {
             $this->queryEndpoint->addExistsToBoolQuery($column, $type);
         }
 
@@ -289,7 +286,7 @@ class Builder
      * @param array $columns
      * @return $this
      */
-    public function whereNotNull(array $columns): self
+    public function whereNotNull(array $columns): static
     {
         return $this->whereNull($columns, true);
     }
@@ -301,7 +298,7 @@ class Builder
      * @param string $type
      * @return $this
      */
-    public function whereBetween(string $column, int|float $min, int|float $max, string $type = 'must'): self
+    public function whereBetween(string $column, int|float $min, int|float $max, string $type = 'must'): static
     {
         $this->queryEndpoint->addBetweenToBoolQuery($column, $min, $max, $type);
 
@@ -314,7 +311,7 @@ class Builder
      * @param int|float $max
      * @return $this
      */
-    public function shouldBetween(string $column, int|float $min, int|float $max): self
+    public function shouldBetween(string $column, int|float $min, int|float $max): static
     {
         return $this->whereBetween($column, $min, $max, BoolQuery::SHOULD);
     }
@@ -325,7 +322,7 @@ class Builder
      * @param int|float $max
      * @return $this
      */
-    public function whereNotBetween(string $column, int|float $min, int|float $max): self
+    public function whereNotBetween(string $column, int|float $min, int|float $max): static
     {
         return $this->whereBetween($column, $min, $max, BoolQuery::MUST_NOT);
     }
@@ -337,7 +334,7 @@ class Builder
      * @param callable $callback
      * @return $this
      */
-    public function whereHas(string $relation, callable $callback): self
+    public function whereHas(string $relation, callable $callback): static
     {
         $query = $this->newBuilder();
         $query->setRelation($relation);
@@ -355,7 +352,7 @@ class Builder
     /**
      * @return $this
      */
-    public function newBuilder(): self
+    public function newBuilder(): static
     {
         return new static();
     }
@@ -367,7 +364,7 @@ class Builder
      * @param string $type
      * @return $this
      */
-    public function whereBool(callable $callback, string $type = 'must'): self
+    public function whereBool(callable $callback, string $type = 'must'): static
     {
         call_user_func($callback, $query = $this->newBuilder());
 
@@ -379,7 +376,7 @@ class Builder
      * @param string $type
      * @return $this
      */
-    public function addToBoolWhereQuery(Builder $query, string $type = 'must'): self
+    public function addToBoolWhereQuery(Builder $query, string $type = 'must'): static
     {
         if ($bQuery = $query->getBoolQuery()) {
             $this->queryEndpoint->addToBoolQuery($bQuery, $type);
@@ -411,7 +408,7 @@ class Builder
      * @param string $type
      * @return $this
      */
-    public function addToBoolQuery(QueryInterface $query, string $type = 'must'): self
+    public function addToBoolQuery(QueryInterface $query, string $type = 'must'): static
     {
         $this->queryEndpoint->addToBoolQuery($query, $type);
 
@@ -424,7 +421,7 @@ class Builder
      * @return $this
      * @throws ElasticException
      */
-    public function orderBy(SortInterface|string $column, string $direction = 'asc'): self
+    public function orderBy(SortInterface|string $column, string $direction = 'asc'): static
     {
         if ($column instanceof SortInterface) {
             $this->sortEndpoint->addContainer($column);
@@ -444,9 +441,31 @@ class Builder
      * @return $this
      * @throws ElasticException
      */
-    public function orderByDesc(string $column): self
+    public function orderByDesc(string $column): static
     {
         return $this->orderBy($column, 'desc');
+    }
+
+    /**
+     * @param int $offset
+     * @return $this
+     */
+    public function offset(int $offset): static
+    {
+        $this->offset = $offset;
+
+        return $this;
+    }
+
+    /**
+     * @param int $limit
+     * @return $this
+     */
+    public function limit(int $limit): static
+    {
+        $this->limit = $limit;
+
+        return $this;
     }
 
     /**
@@ -454,7 +473,7 @@ class Builder
      * @param array $params
      * @return $this
      */
-    public function highlight(string $column, array $params = []): self
+    public function highlight(string $column, array $params = []): static
     {
         $this->highlightEndpoint->addField($column, $params);
 
@@ -463,10 +482,10 @@ class Builder
 
     /**
      * @param AggregationInterface|string $column
-     * @param string $type
+     * @param string|null $type
      * @return $this
      */
-    public function aggregation(AggregationInterface|string $column, string $type): self
+    public function aggregation(AggregationInterface|string $column, string $type = null): static
     {
         if ($column instanceof AggregationInterface) {
             $this->aggregationEndpoint->addContainer($column);
@@ -482,19 +501,18 @@ class Builder
      * @param array $ranges
      * @return $this
      */
-    public function range(string $column, array $ranges): self
+    public function range(string $column, array $ranges): static
     {
         $this->aggregationEndpoint->addRangeBucket($column, $ranges);
 
         return $this;
     }
 
-
     /**
      * @param string $column
      * @return $this
      */
-    public function stats(string $column): self
+    public function stats(string $column): static
     {
         return $this->aggregation($column, 'stats');
     }
@@ -503,7 +521,7 @@ class Builder
      * @param string $column
      * @return $this
      */
-    public function sum(string $column): self
+    public function sum(string $column): static
     {
         return $this->aggregation($column, 'sum');
     }
@@ -512,7 +530,7 @@ class Builder
      * @param string $column
      * @return $this
      */
-    public function min(string $column): self
+    public function min(string $column): static
     {
         return $this->aggregation($column, 'min');
     }
@@ -521,7 +539,7 @@ class Builder
      * @param string $column
      * @return $this
      */
-    public function max(string $column): self
+    public function max(string $column): static
     {
         return $this->aggregation($column, 'max');
     }
@@ -530,7 +548,7 @@ class Builder
      * @param string $column
      * @return $this
      */
-    public function avg(string $column): self
+    public function avg(string $column): static
     {
         return $this->aggregation($column, 'avg');
     }
@@ -541,7 +559,7 @@ class Builder
      */
     public function get(array $options = []): ElasticEntity
     {
-        return $this->newEsEngine()->search($options);
+        return $this->esEngine->search($options);
     }
 
     /**
@@ -554,56 +572,22 @@ class Builder
     }
 
     /**
-     * @param Collection $models
-     * @return bool
+     * @param array $params
+     * @return array
      */
-    public function update(Collection $models): bool
+    public function update(array $params): array
     {
-        return $this->newEsEngine()->update($models);
+        return $this->esEngine->bulk($params);
     }
 
-    /**
-     * @param Collection $models
-     * @return bool
-     */
-    public function delete(Collection $models): bool
-    {
-        return $this->newEsEngine()->delete($models);
-    }
 
     /**
-     * @return Engine
+     * @param array $params
+     * @return array
      */
-    public function newEsEngine(): Engine
+    public function delete(array $params): array
     {
-        if (!$this->esEngine) {
-            $this->esEngine = new Engine();
-            $this->esEngine->setBuilder($this);
-        }
-
-        return $this->esEngine;
-    }
-
-    /**
-     * @param int $offset
-     * @return $this
-     */
-    public function offset(int $offset): self
-    {
-        $this->offset = $offset;
-
-        return $this;
-    }
-
-    /**
-     * @param int $limit
-     * @return $this
-     */
-    public function limit(int $limit): self
-    {
-        $this->limit = $limit;
-
-        return $this;
+        return $this->esEngine->bulk($params);
     }
 
     /**
@@ -617,6 +601,7 @@ class Builder
                 $result[$param] = $value;
             }
         }
+        /* @var EndpointInterface[] $endpoints */
         $endpoints = [
             $this->queryEndpoint,
             $this->sortEndpoint,
@@ -656,7 +641,7 @@ class Builder
      * @param string $relation
      * @return $this
      */
-    public function setRelation(string $relation): self
+    public function setRelation(string $relation): static
     {
         $this->queryEndpoint->setRelation($relation);
 
@@ -670,7 +655,7 @@ class Builder
      * @param string $occur
      * @return $this
      */
-    protected function addArrayOfWheres(array $column, string $occur): self
+    protected function addArrayOfWheres(array $column, string $occur): static
     {
         $this->whereBool(function (Builder $query) use ($column, $occur) {
             foreach ($column as $key => $value) {

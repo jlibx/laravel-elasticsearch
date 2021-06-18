@@ -48,7 +48,7 @@ class AggregationEndpoint extends Endpoint
      * @param array $ranges
      * @return $this
      */
-    public function addRangeBucket(string $field, array $ranges): self
+    public function addRangeBucket(string $field, array $ranges): static
     {
         $aggregation = new RangeAggregation($field, $ranges);
         $this->addContainer($aggregation, $aggregation->getName());
@@ -61,7 +61,7 @@ class AggregationEndpoint extends Endpoint
      * @param array $script
      * @return $this
      */
-    public function addTermsBucket(string $field, array $script = []): self
+    public function addTermsBucket(string $field, array $script = []): static
     {
         $aggregation = new TermsAggregation($field, $script);
         $this->addContainer($aggregation, $aggregation->getName());
@@ -74,7 +74,7 @@ class AggregationEndpoint extends Endpoint
      * @param string $type
      * @return $this
      */
-    public function addAggregation(string $field, string $type): self
+    public function addAggregation(string $field, string $type): static
     {
         $aggregation = match ($type) {
             'stats' => new StatsAggregation($field),

@@ -32,7 +32,7 @@ class RangeQuery extends Query
      * @param array ranges
      * @return $this
      */
-    public function setRanges(array $ranges): self
+    public function setRanges(array $ranges): static
     {
         foreach ($ranges as $key => $value) {
             $this->addParam($key, $value);
@@ -45,7 +45,7 @@ class RangeQuery extends Query
      * @param int|float $value
      * @return $this
      */
-    public function setLtValue(int|float $value): self
+    public function setLtValue(int|float $value): static
     {
         $this->setParams([static::LT => $value]);
 
@@ -56,7 +56,7 @@ class RangeQuery extends Query
      * @param int|float $value
      * @return $this
      */
-    public function setLteValue(int|float $value): self
+    public function setLteValue(int|float $value): static
     {
         $this->setParams([static::LTE => $value]);
 
@@ -67,7 +67,7 @@ class RangeQuery extends Query
      * @param int|float $value
      * @return $this
      */
-    public function setGtValue(int|float $value): self
+    public function setGtValue(int|float $value): static
     {
         $this->setParams([static::GT => $value]);
 
@@ -78,7 +78,7 @@ class RangeQuery extends Query
      * @param int|float $value
      * @return $this
      */
-    public function setGteValue(int|float $value): self
+    public function setGteValue(int|float $value): static
     {
         $this->setParams([static::GTE => $value]);
 

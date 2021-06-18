@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Golly\Elastic\Queries\TermLevel;
 
-
 use Golly\Elastic\Queries\Query;
 
 /**

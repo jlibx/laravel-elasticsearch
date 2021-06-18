@@ -32,7 +32,7 @@ class DisMaxQuery extends Query
      * @param QueryInterface $query
      * @return $this
      */
-    public function addQuery(QueryInterface $query): self
+    public function addQuery(QueryInterface $query): static
     {
         $this->queries[] = $query;
 

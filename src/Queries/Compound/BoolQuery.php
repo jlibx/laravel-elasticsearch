@@ -60,13 +60,35 @@ class BoolQuery extends Query
      * @param string $type
      * @return $this
      */
-    public function addQuery(QueryInterface $query, string $type): self
+    public function addQuery(QueryInterface $query, string $type): static
     {
-        if ($type == self::SHOULD) {
-            $this->addParam('minimum_should_match', 1);
+        if ($this->isValidType($type)) {
+            if ($this->isShouldType($type)) {
+                $this->addParam('minimum_should_match', 1);
+            }
+            $this->wheres[$type][] = $query;
         }
-        $this->wheres[$type][] = $query;
 
         return $this;
+    }
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    protected function isValidType(string $type): bool
+    {
+        return in_array($type, [
+            static::MUST, static::SHOULD, static::MUST_NOT, static::FILTER
+        ]);
+    }
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    protected function isShouldType(string $type): bool
+    {
+        return $type == static::SHOULD;
     }
 }

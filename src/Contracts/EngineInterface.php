@@ -14,26 +14,18 @@ interface EngineInterface
 {
 
     /**
-     * Update the given model in the index.
-     *
-     * @param Collection $models
-     * @return bool
-     */
-    public function update(Collection $models): bool;
-
-    /**
-     * Remove the given model from the index.
-     *
-     * @param Collection $models
-     * @return bool
-     */
-    public function delete(Collection $models): bool;
-
-    /**
      * Perform the given search on the engine.
      *
      * @param array $options
      * @return ElasticEntity
      */
     public function search(array $options = []): ElasticEntity;
+
+
+    /**
+     * @param array $params
+     * @return array
+     */
+    public function bulk(array $params): array;
+
 }

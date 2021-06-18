@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Golly\Elastic\Hydrate;
@@ -34,13 +33,13 @@ class ElasticEntity extends Entity
      * @Source(field="hits.total")
      * @var int|array
      */
-    public mixed $total = 0;
+    public int|array $total = 0;
 
     /**
      * @Source(field="hits.max_score")
-     * @var float
+     * @var float|null
      */
-    public float $maxScore;
+    public ?float $maxScore;
 
     /**
      * @Source(field="hits.hits")
