@@ -1,9 +1,7 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Golly\Elastic;
-
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
