@@ -82,9 +82,9 @@ class Builder
     public HighlightEndpoint $highlightEndpoint;
 
     /**
-     * @var Engine
+     * @var Engine|null
      */
-    protected Engine $esEngine;
+    protected ?Engine $esEngine;
 
     /**
      * @var string[]
@@ -122,7 +122,9 @@ class Builder
         $this->sortEndpoint = new SortEndpoint();
         $this->aggregationEndpoint = new AggregationEndpoint();
         $this->highlightEndpoint = new HighlightEndpoint();
-        $this->esEngine = (new Engine($hosts))->setBuilder($this);
+        if ($hosts) {
+            $this->esEngine = (new Engine($hosts))->setBuilder($this);
+        }
     }
 
     /**
@@ -354,7 +356,7 @@ class Builder
      */
     public function newBuilder(): static
     {
-        return new static();
+        return new static([]);
     }
 
     /**

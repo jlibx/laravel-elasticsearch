@@ -34,17 +34,27 @@ class ExistsQuery extends Query
      */
     public function getTypeValue(): array
     {
+<<<<<<< HEAD
         return [];
     }
 
 
+=======
+        return [$this->field];
+    }
+
+>>>>>>> 64a8b9acb1bddde04015f9df69ba7eff70bc795a
     /**
      * @return array
      */
     public function toArray(): array
     {
         return [
+<<<<<<< HEAD
             $this->getType() => $this->field
+=======
+            $this->getType() => (string)$this->getTypeValue()
+>>>>>>> 64a8b9acb1bddde04015f9df69ba7eff70bc795a
         ];
     }
 }
