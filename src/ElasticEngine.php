@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Golly\Elastic;
-
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
@@ -53,7 +51,9 @@ class ElasticEngine implements EngineInterface
     {
         $params = $this->builder->toSearchParams();
         // 记录执行参数
-        Log::info('elasticsearch params ' . json_encode($params));
+        if(app()->environment('local')) {
+            Log::info('elasticsearch params ' . json_encode($params));
+        }
         $result = $this->elastic->search($params);
 
         return ElasticEntity::instance($result, false);

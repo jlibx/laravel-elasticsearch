@@ -416,6 +416,16 @@ class ElasticBuilder
     }
 
     /**
+     * @return $this
+     */
+    public function random()
+    {
+        $this->sortEndpoint->withRandomSort();
+
+        return $this;
+    }
+
+    /**
      * @param SortInterface|string $column
      * @param string $direction
      * @return $this

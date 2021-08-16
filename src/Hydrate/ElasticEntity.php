@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Golly\Elastic\Hydrate;
 
 use Golly\Hydrate\Annotations\Source;
