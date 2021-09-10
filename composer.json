@@ -1,5 +1,5 @@
 {
-    "name": "z-golly/elastic",
+    "name": "kabunx/elastic",
     "description": "elasticsearch for laravel",
     "license": "MIT",
     "authors": [
@@ -9,23 +9,23 @@
         }
     ],
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^8.0",
         "laravel/framework": "^8.0",
-        "elasticsearch/elasticsearch": "^7.11",
-        "z-golly/hydrate": "^0.1"
+        "kabunx/elasticsearch": "^0.1",
+        "kabunx/hydrate": "^0.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.3"
     },
     "autoload": {
         "psr-4": {
-            "Golly\\Elastic\\": "src/"
+            "Kabunx\\Elastic\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Golly\\Elastic\\ElasticServiceProvider"
+                "Kabunx\\Elastic\\EsServiceProvider"
             ]
         }
     },
