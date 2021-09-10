@@ -30,7 +30,7 @@ class EsBuilder
      *
      * @var bool
      */
-    protected bool $withSoftDeleted = false;
+    protected bool $withEsSoftDeleted = false;
 
 
     public function __construct()
@@ -47,9 +47,9 @@ class EsBuilder
     /**
      * @return $this
      */
-    public function withTrashed(): static
+    public function withEsTrashed(): static
     {
-        $this->withSoftDeleted = true;
+        $this->withEsSoftDeleted = true;
 
         return $this;
     }
@@ -60,7 +60,7 @@ class EsBuilder
      */
     public function raw(array $columns = []): array
     {
-        if (! $this->withSoftDeleted && $this->model->useSoftDelete()) {
+        if (! $this->withEsSoftDeleted && $this->model->useSoftDelete()) {
             $this->builder->term(
                 $this->model->getEsSoftDeletedColumn(),
                 ! $this->model->getEsSoftDeletedValue()
@@ -125,7 +125,7 @@ class EsBuilder
         $data = [];
         foreach ($models as $model) {
             if ($model instanceof SearchableInterface) {
-                $model->ifSoftDeletedAddMetadata();
+                $model->addMetadataIfSoftDeleted();
                 $data[] = [
                     'id' => $model->getEsId(),
                     'doc' => $model->toEsArray()

@@ -155,7 +155,7 @@ trait Searchable
         if (config('elastic.queue')) {
             dispatch(new MakeSearchable($this))->onQueue('elastic');
         } else {
-            dispatch_now(new MakeSearchable($this));
+            dispatch_sync(new MakeSearchable($this));
         }
     }
 
@@ -225,7 +225,7 @@ trait Searchable
         return false;
     }
 
-    public function ifSoftDeletedAddMetadata(): void
+    public function addMetadataIfSoftDeleted(): void
     {
         if ($this->useSoftDelete()) {
             $this->addSearchMetadata(

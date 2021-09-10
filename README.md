@@ -54,9 +54,9 @@ use App\Entities\UserEntity;
 
 在orm中，可直接用DB门面类来执行MySQL操作，相当于实例化`Illuminate\Database\Query\Builder`类。
 
-那么ES应该也可以这样操作，所以我也加入了一个`Builder`类
+那么ES应该也可以这样操作，所以我也加入了一个`Builder`类，请参考`kabunx/elasticsearch`扩展
 
-当然`Model`模型依赖可以按原来的方式操作，最终都是`Builder`来构造查询参数
+当然`Model`模型依赖可以按原来的方式操作，实例了`EsBuilder`，但最终都是通过`Builder`来构造查询参数
 ```php
 (new Builder())
     ->select(['id'])
