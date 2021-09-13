@@ -6,35 +6,25 @@
 <?php
 namespace App\Entities;
 
-
-use Carbon\Carbon;use Kabunx\Elastic\Hydrate\EsEntity;
-use Kabunx\Elastic\Hydrate\Annotations\EsProperty;
+use Carbon\Carbon;
+use Kabunx\Elastic\Hydrate\EsEntity;
+use Kabunx\Elastic\Hydrate\EsProperty;
 use Kabunx\Elastic\Exceptions\EsException;
 
 class UserEntity extends EsEntity
 {
 
-    /**
-     * @EsProperty(type="long")
-     * @var int
-     */
+    #[EsProperty("userId")]
     public int $id;
 
-    /**
-     * @var string
-     */
     public string $name;
 
-    /**
-     * @var Carbon|null 
-     */
     public ?Carbon $date;
 
     /**
-     * @EsProperty(type="App\Entities\UserAddressEntity")
-     *
      * @var array|UserAddressEntity[]
      */
+     #[EsProperty(UserAddressEntity::class)]
     public $address = [];
 }
 ```
