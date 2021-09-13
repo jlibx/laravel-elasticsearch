@@ -30,7 +30,7 @@ class EsBuilder
      *
      * @var bool
      */
-    protected bool $withEsSoftDeleted = false;
+    protected bool $withSoftDeleted = false;
 
 
     public function __construct()
@@ -47,9 +47,9 @@ class EsBuilder
     /**
      * @return $this
      */
-    public function withEsTrashed(): static
+    public function withTrashed(): static
     {
-        $this->withEsSoftDeleted = true;
+        $this->withSoftDeleted = true;
 
         return $this;
     }
@@ -60,7 +60,7 @@ class EsBuilder
      */
     public function raw(array $columns = []): array
     {
-        if (! $this->withEsSoftDeleted && $this->model->useSoftDelete()) {
+        if (! $this->withSoftDeleted && $this->model->useSoftDelete()) {
             $this->builder->term(
                 $this->model->getEsSoftDeletedColumn(),
                 ! $this->model->getEsSoftDeletedValue()
@@ -90,12 +90,23 @@ class EsBuilder
      */
     public function paginate(int $perPage = null, array $columns = [], string $pageName = 'page', int $page = null): LengthAwarePaginator
     {
-        $perPage ?: $this->model->getEsPerPage();
+        $perPage = $perPage ?: $this->model->getEsPerPage();
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
         $offset = ($page - 1) * $perPage;
         $this->builder->offset($offset)->limit($perPage);
 
         return $this->get($columns)->toPaginator($perPage, $page);
+    }
+
+    /**
+     * @param bool $dynamic
+     * @return array
+     */
+    public function autoCreateIndex(bool $dynamic = true): array
+    {
+        return $this->builder->createIndex(
+            $this->model->getEsProperties(), $dynamic
+        );
     }
 
     /**
@@ -125,7 +136,7 @@ class EsBuilder
         $data = [];
         foreach ($models as $model) {
             if ($model instanceof SearchableInterface) {
-                $model->addMetadataIfSoftDeleted();
+                $model->ifSoftDeletedAddMetadata();
                 $data[] = [
                     'id' => $model->getEsId(),
                     'doc' => $model->toEsArray()

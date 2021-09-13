@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace Kabunx\Elastic\Hydrate;
 
-use Kabunx\Elastic\Hydrate\Annotations\EsProperty;
-use Kabunx\Elastic\EsMapper;
-use Kabunx\Hydrate\Annotations\Source;
 use Kabunx\Hydrate\Contracts\EntityInterface;
-use Kabunx\Hydrate\Reflection;
+use Kabunx\Hydrate\Hydrate;
 
-class EsReflection extends Reflection
+class EsHydrate extends Hydrate
 {
+
+    protected static EsPropertyReader $esPropertyReader;
+
     /**
      * @param EntityInterface $entity
      * @return array
@@ -22,13 +22,13 @@ class EsReflection extends Reflection
         $reflectProperties = $instance->getReflectionProperties();
         $properties = [];
         foreach ($reflectProperties as $name => $property) {
-            $field = $instance->toSnakeName($name);
-            $esProperty = $instance->getAnnotationReader()->getPropertyAnnotation($property, EsProperty::class);
-            if ($esProperty instanceof EsProperty && $esProperty->type) {
+            $field = $instance->getSourceKeyName($name);
+            $esProperty = $instance->getEsPropertyReader()->getEsProperty($property);
+            if ($esProperty) {
                 $value = EsMapper::fromEsProperty($esProperty);
-                $source = $instance->getAnnotationReader()->getPropertyAnnotation($property, Source::class);
-                if ($source instanceof Source) {
-                    $field = $source->from;
+                $from = $instance->getSourceReader()->getSourceFrom($property);
+                if ($from) {
+                    $field = $from;
                 }
             } else {
                 $value = EsMapper::fromReflectionType($property->getType());
@@ -39,5 +39,14 @@ class EsReflection extends Reflection
         }
 
         return $properties;
+    }
+
+
+    protected function getEsPropertyReader(): EsPropertyReader
+    {
+        if (! isset(static::$esPropertyReader)) {
+            static::$esPropertyReader = new EsPropertyReader();
+        }
+        return static::$esPropertyReader;
     }
 }

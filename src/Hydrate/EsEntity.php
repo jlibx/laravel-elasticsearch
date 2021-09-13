@@ -19,7 +19,7 @@ class EsEntity extends Entity implements EsEntityInterface
      * @var float|null
      */
     protected ?float $score = null;
-    
+
 
     /**
      * @param array $data
@@ -35,7 +35,7 @@ class EsEntity extends Entity implements EsEntityInterface
      */
     public function getProperties(): array
     {
-        return EsReflection::getProperties($this);
+        return EsHydrate::getProperties($this);
     }
 
     /**

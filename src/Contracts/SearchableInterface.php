@@ -3,9 +3,13 @@ declare(strict_types=1);
 
 namespace Kabunx\Elastic\Contracts;
 
+use Kabunx\Elastic\EsBuilder;
+
 interface SearchableInterface
 {
     public function newEsEntity(): EsEntityInterface;
+
+    public function newEsBuilder(): EsBuilder;
 
     /**
      * @return string
@@ -24,14 +28,19 @@ interface SearchableInterface
 
     public function getEsSoftDeletedValue(): bool;
 
+    public function useSoftDelete(): bool;
+
+    /**
+     * 忽略索引
+     *
+     * @return bool
+     */
     public function ignoreSearchable(): bool;
 
     public function searchable(): void;
 
     public function toEsArray(): array;
 
-    public function useSoftDelete(): bool;
-
-    public function addMetadataIfSoftDeleted(): void;
+    public function ifSoftDeletedAddMetadata(): void;
 
 }

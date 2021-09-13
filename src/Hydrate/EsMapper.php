@@ -1,11 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic;
+namespace Kabunx\Elastic\Hydrate;
 
 use Carbon\Carbon;
 use Kabunx\Elastic\Contracts\EsEntityInterface;
-use Kabunx\Elastic\Hydrate\Annotations\EsProperty;
 use ReflectionNamedType;
 use ReflectionType;
 
@@ -26,12 +25,12 @@ use ReflectionType;
  *      真值: true, "true", "on", "yes", "1"...
  *      假值: false, "false", "off", "no", "0", ""(空字符串), 0.0, 0
  * 5、范围类型 - range
- *      integer_range	−231 ~ 231−1
- *      long_range	−263 ~ 263−1
- *      float_range	32位单精度浮点型
- *      double_range	64位双精度浮点型
- *      date_range	64位整数, 毫秒计时
- *      ip_range	IP值的范围, 支持IPV4和IPV6, 或者这两种同时存在
+ *      integer_range    −231 ~ 231−1
+ *      long_range    −263 ~ 263−1
+ *      float_range    32位单精度浮点型
+ *      double_range    64位双精度浮点型
+ *      date_range    64位整数, 毫秒计时
+ *      ip_range    IP值的范围, 支持IPV4和IPV6, 或者这两种同时存在
  * 6、对象类型 - object
  * 7、嵌套类型 - nested
  */
@@ -44,18 +43,18 @@ class EsMapper
     protected static array $analyzers = ['ik_smart', 'ik_max_word'];
 
     /**
-     * @param EsProperty $property
+     * @param EsProperty $esProperty
      * @return array
      */
-    public static function fromEsProperty(EsProperty $property): array
+    public static function fromEsProperty(EsProperty $esProperty): array
     {
-        if (class_exists($property->type)) {
-            return static::toClassProperties($property->type);
+        if (class_exists($esProperty->type)) {
+            return static::toClassProperties($esProperty->type);
         }
         return array_filter([
-            'type' => static::toType($property->type),
-            'format' => static::toFormat($property->format),
-            'analyzer' => static::toAnalyzer($property->analyzer)
+            'type' => static::toType($esProperty->type),
+            'format' => static::toFormat($esProperty->format),
+            'analyzer' => static::toAnalyzer($esProperty->analyzer)
         ]);
     }
 
