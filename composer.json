@@ -11,8 +11,8 @@
     "require": {
         "php": "^8.0",
         "laravel/framework": "^8.0",
-        "kabunx/elasticsearch": "^0.1",
-        "kabunx/hydrate": "^0.1"
+        "kabunx/elasticsearch": "^0.2",
+        "kabunx/hydrate": "^0.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.3"
