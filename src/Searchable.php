@@ -196,9 +196,9 @@ trait Searchable
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getEsSoftDeletedValue(): mixed
+    public function getEsSoftDeletedValue(): bool
     {
         return true;
     }
