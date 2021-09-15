@@ -26,7 +26,11 @@ interface SearchableInterface
 
     public function getEsSoftDeletedColumn(): string;
 
-    public function getEsSoftDeletedValue(): bool;
+    /**
+     * 不确定数据结构的设计
+     * 可能为：on、yes、1、true
+     */
+    public function getEsSoftDeletedValue(): mixed;
 
     public function useSoftDelete(): bool;
 

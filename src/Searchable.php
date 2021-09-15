@@ -155,7 +155,7 @@ trait Searchable
         if (config('elastic.queue')) {
             dispatch(new MakeSearchable($this))->onQueue('elastic');
         } else {
-            dispatch_now(new MakeSearchable($this));
+            dispatch_sync(new MakeSearchable($this));
         }
     }
 
@@ -196,9 +196,9 @@ trait Searchable
     }
 
     /**
-     * @return bool
+     * @return mixed
      */
-    public function getEsSoftDeletedValue(): bool
+    public function getEsSoftDeletedValue(): mixed
     {
         return true;
     }
