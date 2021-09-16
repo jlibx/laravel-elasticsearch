@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic\Hydrate;
+namespace Kabunx\LaravelElasticsearch\Hydrate;
 
 use Carbon\Carbon;
-use Kabunx\Elastic\Contracts\EsEntityInterface;
+use Kabunx\LaravelElasticsearch\Contracts\EsEntityInterface;
 use ReflectionNamedType;
 use ReflectionType;
 

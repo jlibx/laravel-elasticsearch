@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic;
+namespace Kabunx\LaravelElasticsearch;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Traits\ForwardsCalls;
-use Kabunx\Elastic\Contracts\SearchableInterface;
+use Kabunx\LaravelElasticsearch\Contracts\SearchableInterface;
 use Kabunx\Elasticsearch\Builder;
 
 

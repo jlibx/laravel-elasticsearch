@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic\Contracts;
+namespace Kabunx\LaravelElasticsearch\Contracts;
 
 interface EsEntityInterface
 {

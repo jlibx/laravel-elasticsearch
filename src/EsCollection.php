@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic;
+namespace Kabunx\LaravelElasticsearch;
 
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use Illuminate\Pagination\LengthAwarePaginator;
 use IteratorAggregate;
-use Kabunx\Elastic\Contracts\EsEntityInterface;
-use Kabunx\Elastic\Hydrate\EsEntity;
+use Kabunx\LaravelElasticsearch\Contracts\EsEntityInterface;
+use Kabunx\LaravelElasticsearch\Hydrate\EsEntity;
 
 
 /**

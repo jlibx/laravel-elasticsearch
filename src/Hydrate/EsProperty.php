@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic\Hydrate;
+namespace Kabunx\LaravelElasticsearch\Hydrate;
 
 use Attribute;
 

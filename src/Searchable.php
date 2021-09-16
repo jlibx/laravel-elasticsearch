@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic;
+namespace Kabunx\LaravelElasticsearch;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Kabunx\Elastic\Jobs\MakeSearchable;
+use Kabunx\LaravelElasticsearch\Jobs\MakeSearchable;
 
 /**
  * @mixin Model
@@ -203,12 +203,17 @@ trait Searchable
         return true;
     }
 
+    public function getEsNotSoftDeletedValue(): bool
+    {
+        return false;
+    }
+
     /**
      * Determine if the current class should use soft deletes with searching.
      *
      * @return bool
      */
-    public function useSoftDelete(): bool
+    public function isUseSoftDeletes(): bool
     {
         return in_array(SoftDeletes::class, class_uses_recursive($this));
     }
@@ -225,12 +230,14 @@ trait Searchable
         return false;
     }
 
-    public function ifSoftDeletedAddMetadata(): void
+    public function addMetadataIfSoftDeleted(): void
     {
-        if ($this->useSoftDelete()) {
+        if ($this->isUseSoftDeletes()) {
+            $value = $this->isSoftDeleted()
+                ? $this->getEsSoftDeletedValue()
+                : $this->getEsNotSoftDeletedValue();
             $this->addSearchMetadata(
-                $this->getEsSoftDeletedColumn(),
-                $this->isSoftDeleted()
+                $this->getEsSoftDeletedColumn(), $value
             );
         }
     }

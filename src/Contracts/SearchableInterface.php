@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic\Contracts;
+namespace Kabunx\LaravelElasticsearch\Contracts;
 
-use Kabunx\Elastic\EsBuilder;
+use Kabunx\LaravelElasticsearch\EsBuilder;
 
 interface SearchableInterface
 {
@@ -24,6 +24,8 @@ interface SearchableInterface
 
     public function getEsPerPage(): int;
 
+    public function isUseSoftDeletes(): bool;
+
     public function getEsSoftDeletedColumn(): string;
 
     /**
@@ -32,7 +34,7 @@ interface SearchableInterface
      */
     public function getEsSoftDeletedValue(): mixed;
 
-    public function useSoftDelete(): bool;
+    public function getEsNotSoftDeletedValue(): mixed;
 
     /**
      * 忽略索引
@@ -45,6 +47,6 @@ interface SearchableInterface
 
     public function toEsArray(): array;
 
-    public function ifSoftDeletedAddMetadata(): void;
+    public function addMetadataIfSoftDeleted(): void;
 
 }

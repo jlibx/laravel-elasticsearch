@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic\Jobs;
+namespace Kabunx\LaravelElasticsearch\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
-use Kabunx\Elastic\Contracts\SearchableInterface;
+use Kabunx\LaravelElasticsearch\Contracts\SearchableInterface;
 
 class MakeSearchable implements ShouldQueue, ShouldBeUnique
 {

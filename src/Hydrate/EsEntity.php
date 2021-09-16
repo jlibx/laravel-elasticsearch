@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Kabunx\Elastic\Hydrate;
+namespace Kabunx\LaravelElasticsearch\Hydrate;
 
-use Kabunx\Elastic\Contracts\EsEntityInterface;
+use Kabunx\LaravelElasticsearch\Contracts\EsEntityInterface;
 use Kabunx\Hydrate\Entity;
 
 /**

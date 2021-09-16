@@ -1,5 +1,5 @@
 {
-    "name": "kabunx/elastic",
+    "name": "kabunx/laravel-elasticsearch",
     "description": "elasticsearch for laravel",
     "license": "MIT",
     "authors": [
@@ -19,13 +19,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Kabunx\\Elastic\\": "src/"
+            "Kabunx\\LaravelElasticsearch\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Kabunx\\Elastic\\EsServiceProvider"
+                "Kabunx\\LaravelElasticsearch\\EsServiceProvider"
             ]
         }
     },
