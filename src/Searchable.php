@@ -40,7 +40,7 @@ trait Searchable
             ->when(true, function ($query) use ($self) {
                 $query->with($self->getEsRelations());
             })
-            ->when($self->useSoftDelete(), function ($query) {
+            ->when($self->isUseSoftDeletes(), function ($query) {
                 $query->withTrashed();
             })
             ->chunkById($chunk, function (Collection $models) use ($self) {
