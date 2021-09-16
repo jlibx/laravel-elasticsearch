@@ -5,9 +5,6 @@ namespace Kabunx\Elastic\Contracts;
 
 interface EsEntityInterface
 {
-
-    public function newInstance(array $data = []): static;
-
     public function getProperties(): array;
 
     public function getScore(): ?float;

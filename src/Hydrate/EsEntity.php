@@ -20,16 +20,6 @@ class EsEntity extends Entity implements EsEntityInterface
      */
     protected ?float $score = null;
 
-
-    /**
-     * @param array $data
-     * @return $this
-     */
-    public function newInstance(array $data = []): static
-    {
-        return static::instance($data);
-    }
-
     /**
      * @return array
      */

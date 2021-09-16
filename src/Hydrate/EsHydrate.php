@@ -26,7 +26,7 @@ class EsHydrate extends Hydrate
             $esProperty = $instance->getEsPropertyReader()->getEsProperty($property);
             if ($esProperty) {
                 $value = EsMapper::fromEsProperty($esProperty);
-                $from = $instance->getSourceReader()->getSourceFrom($property);
+                $from = $instance->getAttributeReader()->getColumnFrom($property);
                 if ($from) {
                     $field = $from;
                 }
