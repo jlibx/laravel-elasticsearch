@@ -6,6 +6,7 @@ namespace Kabunx\LaravelElasticsearch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Kabunx\LaravelElasticsearch\Contracts\SearchableInterface;
 use Kabunx\Elasticsearch\Builder;
@@ -66,6 +67,10 @@ class EsBuilder
                 $this->model->getEsNotSoftDeletedValue()
             );
         }
+        if (config('elastic.log')) {
+            Log::info('es params ' . json_encode($this->builder->toSearchParams()));
+        }
+
 
         return $this->builder->select($columns)->get();
     }

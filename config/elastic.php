@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Str;
 
 return [
@@ -8,5 +9,6 @@ return [
     ],
     'queue' => env('ELASTIC_QUEUE', false),
     'after_commit' => false,
-    'chunk' => 500
+    'chunk' => 500,
+    'log' => env('ELASTIC_LOG', true)
 ];
