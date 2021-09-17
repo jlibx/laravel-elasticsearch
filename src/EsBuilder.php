@@ -67,12 +67,12 @@ class EsBuilder
                 $this->model->getEsNotSoftDeletedValue()
             );
         }
+        $this->builder->select($columns);
         if (config('elastic.log')) {
             Log::info('es params ' . json_encode($this->builder->toSearchParams()));
         }
 
-
-        return $this->builder->select($columns)->get();
+        return $this->builder->get();
     }
 
     /**
