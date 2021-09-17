@@ -60,10 +60,10 @@ class EsBuilder
      */
     public function raw(array $columns = []): array
     {
-        if (! $this->withSoftDeleted && $this->model->useSoftDelete()) {
+        if (! $this->withSoftDeleted && $this->model->isUseSoftDeletes()) {
             $this->builder->term(
                 $this->model->getEsSoftDeletedColumn(),
-                ! $this->model->getEsSoftDeletedValue()
+                $this->model->getEsNotSoftDeletedValue()
             );
         }
 
@@ -136,7 +136,7 @@ class EsBuilder
         $data = [];
         foreach ($models as $model) {
             if ($model instanceof SearchableInterface) {
-                $model->ifSoftDeletedAddMetadata();
+                $model->addMetadataIfSoftDeleted();
                 $data[] = [
                     'id' => $model->getEsId(),
                     'doc' => $model->toEsArray()
