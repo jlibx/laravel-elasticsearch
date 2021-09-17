@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Kabunx\LaravelElasticsearch\Contracts\SearchableInterface;
 use Kabunx\Elasticsearch\Builder;
+use Kabunx\LaravelElasticsearch\Hydrate\EsEntity;
 
 
 /**
@@ -69,7 +70,7 @@ class EsBuilder
         }
         $this->builder->select($columns);
         if (config('elastic.log')) {
-            Log::info('es params ' . json_encode($this->builder->toSearchParams()));
+            Log::info('es search params ' . json_encode($this->builder->toSearchParams()));
         }
 
         return $this->builder->get();
@@ -84,6 +85,19 @@ class EsBuilder
         $data = $this->raw($columns);
 
         return EsCollection::make($this->model->newEsEntity(), $data);
+    }
+
+    /**
+     * @param array $columns
+     * @return EsEntity|null
+     */
+    public function first(array $columns = []): ?EsEntity
+    {
+        $this->limit(1);
+
+        $collection = $this->get($columns);
+
+        return $collection->items[0] ?? null;
     }
 
     /**
