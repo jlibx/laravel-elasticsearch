@@ -34,6 +34,12 @@ class EsBuilder
      */
     protected bool $withSoftDeleted = false;
 
+    /**
+     * 临界分，将被添加到entity中
+     * @var float|null
+     */
+    protected ?float $criticalScore = null;
+
 
     public function __construct()
     {
@@ -83,8 +89,10 @@ class EsBuilder
     public function get(array $columns = []): EsCollection
     {
         $data = $this->raw($columns);
+        $entity = $this->model->newEsEntity();
+        $entity->setCriticalScore($this->criticalScore);
 
-        return EsCollection::make($this->model->newEsEntity(), $data);
+        return EsCollection::make($entity, $data);
     }
 
     /**
@@ -192,6 +200,17 @@ class EsBuilder
     {
         $this->model = $model;
         $this->builder->setIndex($model->getEsIndex());
+
+        return $this;
+    }
+
+    /**
+     * @param float|null $criticalScore
+     * @return $this
+     */
+    public function setCriticalScore(?float $criticalScore): static
+    {
+        $this->criticalScore = $criticalScore;
 
         return $this;
     }

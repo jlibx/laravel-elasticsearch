@@ -20,6 +20,8 @@ class EsEntity extends Entity implements EsEntityInterface
      */
     protected ?float $score = null;
 
+    protected ?float $criticalScore = null;
+
     /**
      * @return array
      */
@@ -45,6 +47,22 @@ class EsEntity extends Entity implements EsEntityInterface
         $this->score = $score;
 
         return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getCriticalScore(): ?float
+    {
+        return $this->criticalScore;
+    }
+
+    /**
+     * @param float|null $criticalScore
+     */
+    public function setCriticalScore(?float $criticalScore): void
+    {
+        $this->criticalScore = $criticalScore;
     }
 
 }
