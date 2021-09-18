@@ -59,10 +59,13 @@ class EsEntity extends Entity implements EsEntityInterface
 
     /**
      * @param float|null $criticalScore
+     * @return $this
      */
-    public function setCriticalScore(?float $criticalScore): void
+    public function setCriticalScore(?float $criticalScore): static
     {
         $this->criticalScore = $criticalScore;
+
+        return $this;
     }
 
 }

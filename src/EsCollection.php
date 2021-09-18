@@ -104,7 +104,10 @@ class EsCollection implements ArrayAccess, Countable, IteratorAggregate
         foreach ($items as $item) {
             $score = $item['_score'] ?? 0;
             $source = $item['_source'] ?? [];
-            $entities[] = $entity->newInstance($source)->setScore($score);
+            $entities[] = $entity
+                ->newInstance($source)
+                ->setScore($score)
+                ->setCriticalScore($entity->getCriticalScore());
         }
 
         return $entities;

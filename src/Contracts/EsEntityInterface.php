@@ -13,6 +13,6 @@ interface EsEntityInterface
 
     public function getCriticalScore(): ?float;
 
-    public function setCriticalScore(?float $criticalScore): void;
+    public function setCriticalScore(?float $criticalScore): static;
 
 }
