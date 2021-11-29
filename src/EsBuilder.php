@@ -76,7 +76,7 @@ class EsBuilder
         }
         $this->builder->select($columns);
         if (config('elastic.log')) {
-            Log::info('es search params ' . json_encode($this->builder->toSearchParams()));
+            Log::info('es search', ['params' => json_encode($this->builder->toSearchParams())]);
         }
 
         return $this->builder->get();
